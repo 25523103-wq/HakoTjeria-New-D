@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hakotjeria.controller.ItemFormDialogController"
+      spacing="12" prefWidth="440" styleClass="login-background">
+    <padding>
+        <Insets top="24" right="26" bottom="24" left="26"/>
+    </padding>
+
+    <Label fx:id="judulLabel" text="Tambah Data" styleClass="section-title"/>
+    <Label fx:id="infoLabel" wrapText="true" styleClass="page-subtitle" managed="false" visible="false"/>
+
+    <VBox spacing="6">
+        <Label text="Nama Barang" styleClass="form-label"/>
+        <TextField fx:id="namaField" promptText="Contoh: Tepung Terigu (High Protein)" styleClass="form-field"/>
+    </VBox>
+
+    <VBox spacing="6">
+        <Label text="Satuan Pengukuran (terkunci dari Dropdown Satuan)" styleClass="form-label"/>
+        <ComboBox fx:id="satuanCombo" styleClass="form-field" maxWidth="Infinity"
+                  promptText="Pilih satuan"/>
+    </VBox>
+
+    <VBox fx:id="sumberBox" spacing="6">
+        <Label text="Sumber Produk" styleClass="form-label"/>
+        <ComboBox fx:id="sumberCombo" styleClass="form-field" maxWidth="Infinity"
+                  promptText="Internal (ber-BOM) / Eksternal (tanpa BOM)"/>
+    </VBox>
+
+    <VBox spacing="6">
+        <Label text="Batas Minimum Stok Aman" styleClass="form-label"/>
+        <TextField fx:id="batasMinField" promptText="Contoh: 100" styleClass="form-field"/>
+    </VBox>
+
+    <VBox fx:id="kuantitasAwalBox" spacing="6">
+        <Label text="Kuantitas Awal (tercatat sebagai Mutasi IN &quot;Stok Awal&quot;)" styleClass="form-label"/>
+        <TextField fx:id="kuantitasAwalField" promptText="0" styleClass="form-field"/>
+    </VBox>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <VBox.margin>
+            <Insets top="10"/>
+        </VBox.margin>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Batal" styleClass="btn-secondary" onAction="#onBatal"/>
+        <Button fx:id="simpanButton" text="Simpan" styleClass="btn-primary"
+                defaultButton="true" onAction="#onSimpan"/>
+    </HBox>
+</VBox>

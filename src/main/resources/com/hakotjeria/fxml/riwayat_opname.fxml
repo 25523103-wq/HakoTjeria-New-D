@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hakotjeria.controller.RiwayatOpnameController" spacing="18">
+    <padding>
+        <Insets top="28" right="30" bottom="28" left="30"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <VBox spacing="4">
+            <Label text="Riwayat Stock Opname" styleClass="page-title-primary"/>
+            <Label text="Histori penyesuaian stok dan penghitungan fisik yang telah tervalidasi."
+                   styleClass="page-subtitle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="exportButton" text="Cetak PDF" styleClass="btn-primary" onAction="#onExportPdf"/>
+    </HBox>
+
+    <HBox styleClass="toolbar" spacing="12" alignment="CENTER_LEFT">
+        <VBox spacing="4">
+            <Label text="Pencarian" styleClass="form-label"/>
+            <TextField fx:id="cariField" promptText="Cari ID, atau nama petugas..."
+                       styleClass="form-field" prefWidth="260"/>
+        </VBox>
+        <VBox spacing="4">
+            <Label text="Shift" styleClass="form-label"/>
+            <ComboBox fx:id="shiftCombo" styleClass="form-field" prefWidth="140"/>
+        </VBox>
+        <VBox spacing="4">
+            <Label text="Dari Tanggal" styleClass="form-label"/>
+            <DatePicker fx:id="dariPicker" styleClass="form-field" prefWidth="160"/>
+        </VBox>
+        <VBox spacing="4">
+            <Label text="Sampai Tanggal" styleClass="form-label"/>
+            <DatePicker fx:id="sampaiPicker" styleClass="form-field" prefWidth="160"/>
+        </VBox>
+        <VBox spacing="4">
+            <Label text=" " styleClass="form-label"/>
+            <HBox spacing="8">
+                <Button text="Filter" styleClass="btn-primary" onAction="#onFilter"/>
+                <Button text="Reset" styleClass="btn-secondary" onAction="#onReset"/>
+            </HBox>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS" prefWidth="640">
+            <Label text="Daftar Dokumen Tervalidasi" styleClass="section-title"/>
+            <TableView fx:id="opnameTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colKode" text="ID TRANSAKSI" prefWidth="150"/>
+                    <TableColumn fx:id="colTanggal" text="TANGGAL" prefWidth="110"/>
+                    <TableColumn fx:id="colShift" text="SHIFT" prefWidth="80"/>
+                    <TableColumn fx:id="colPetugas" text="PETUGAS" prefWidth="140"/>
+                    <TableColumn fx:id="colTotalSelisih" text="TOTAL SELISIH" prefWidth="120"/>
+                    <TableColumn fx:id="colStatus" text="STATUS" prefWidth="110"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <VBox fx:id="detailCard" styleClass="card" spacing="10" prefWidth="440" minWidth="380">
+            <Label text="Detail Hasil Stock Opname" styleClass="section-title"/>
+            <VBox fx:id="detailHeaderBox" spacing="4"/>
+            <Label text="Rincian Selisih" styleClass="form-label"/>
+            <TableView fx:id="detailTable" styleClass="table-view" VBox.vgrow="ALWAYS" prefHeight="240">
+                <columns>
+                    <TableColumn fx:id="colDetNama" text="BARANG" prefWidth="150"/>
+                    <TableColumn fx:id="colDetSistem" text="SISTEM" prefWidth="90"/>
+                    <TableColumn fx:id="colDetFisik" text="FISIK" prefWidth="90"/>
+                    <TableColumn fx:id="colDetSelisih" text="SELISIH" prefWidth="90"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </HBox>
+</VBox>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.hakotjeria.controller.LoginController"
+           styleClass="login-background">
+    <VBox alignment="CENTER">
+        <VBox fx:id="loginCard" styleClass="login-card" alignment="CENTER" spacing="8"
+              maxWidth="430" prefWidth="430">
+            <StackPane fx:id="logoBox" styleClass="sidebar-logo-box">
+                <VBox.margin>
+                    <Insets bottom="14"/>
+                </VBox.margin>
+            </StackPane>
+            <Label text="Hako Tjeria" styleClass="page-title"/>
+            <Label text="Industrial Bakery Management" styleClass="page-subtitle"/>
+
+            <VBox spacing="6" alignment="CENTER_LEFT">
+                <VBox.margin>
+                    <Insets top="26"/>
+                </VBox.margin>
+                <Label text="Username" styleClass="form-label"/>
+                <TextField fx:id="usernameField" promptText="Enter your username"
+                           styleClass="form-field" maxWidth="Infinity"/>
+            </VBox>
+
+            <VBox spacing="6" alignment="CENTER_LEFT">
+                <VBox.margin>
+                    <Insets top="12"/>
+                </VBox.margin>
+                <Label text="Password" styleClass="form-label"/>
+                <PasswordField fx:id="passwordField" promptText="********"
+                               styleClass="form-field" maxWidth="Infinity"/>
+            </VBox>
+
+            <HBox alignment="CENTER_LEFT">
+                <VBox.margin>
+                    <Insets top="10"/>
+                </VBox.margin>
+                <CheckBox fx:id="rememberMeCheck" text="Remember me"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Hyperlink fx:id="forgotPasswordLink" text="Forgot Password?" styleClass="btn-link"
+                           onAction="#onForgotPassword"/>
+            </HBox>
+
+            <Button fx:id="loginButton" text="Masuk  →" styleClass="btn-primary"
+                    maxWidth="Infinity" defaultButton="true" onAction="#onLogin">
+                <VBox.margin>
+                    <Insets top="18"/>
+                </VBox.margin>
+            </Button>
+        </VBox>
+    </VBox>
+</StackPane>

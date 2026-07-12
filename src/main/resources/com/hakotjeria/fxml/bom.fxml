@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hakotjeria.controller.BomController" spacing="18">
+    <padding>
+        <Insets top="28" right="30" bottom="28" left="30"/>
+    </padding>
+
+    <VBox spacing="4">
+        <Label text="Formulasi BOM (Bill of Materials)" styleClass="page-title"/>
+        <Label text="Petakan resep digital: satu unit Produk Jadi Internal terhadap komponen Bahan Baku."
+               styleClass="page-subtitle"/>
+    </VBox>
+
+    <HBox styleClass="toolbar" spacing="12">
+        <Label text="Produk Jadi:" styleClass="form-label"/>
+        <ComboBox fx:id="produkCombo" styleClass="form-field" prefWidth="320"
+                  promptText="Pilih Produk Jadi..."/>
+        <Label fx:id="sumberChipHolder" text=""/>
+    </HBox>
+
+    <HBox fx:id="eksternalBanner" styleClass="warning-banner" visible="false" managed="false">
+        <Label text="Produk eksternal diterima dalam wujud jadi dari Kedai Tjeria sehingga tidak memerlukan resep BOM (R04.2)."
+               wrapText="true" styleClass="label-muted"/>
+    </HBox>
+
+    <VBox fx:id="bomCard" styleClass="card" spacing="14" VBox.vgrow="ALWAYS">
+        <Label text="Komponen Resep per 1 Unit Produk" styleClass="section-title"/>
+
+        <HBox fx:id="tambahBox" spacing="10" alignment="CENTER_LEFT">
+            <ComboBox fx:id="bahanCombo" styleClass="form-field" prefWidth="280"
+                      promptText="Pilih Bahan Baku..."/>
+            <TextField fx:id="qtyKomponenField" styleClass="form-field" prefWidth="130"
+                       promptText="Qty per unit"/>
+            <Label fx:id="satuanKomponenLabel" text="-" styleClass="label-muted" prefWidth="60"/>
+            <Button fx:id="tambahKomponenButton" text="+ Tambah Komponen" styleClass="btn-secondary"
+                    onAction="#onTambahKomponen"/>
+        </HBox>
+
+        <TableView fx:id="komponenTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colKomponenNama" text="BAHAN BAKU" prefWidth="280"/>
+                <TableColumn fx:id="colKomponenQty" text="QTY PER UNIT" prefWidth="150"/>
+                <TableColumn fx:id="colKomponenSatuan" text="SATUAN (MENGIKUTI MASTER)" prefWidth="200"/>
+                <TableColumn fx:id="colKomponenAksi" text="AKSI" prefWidth="90"/>
+            </columns>
+        </TableView>
+
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="hapusBomButton" text="Hapus BOM" styleClass="btn-danger" onAction="#onHapusBom"/>
+            <Button fx:id="simpanBomButton" text="Simpan BOM" styleClass="btn-primary" onAction="#onSimpanBom"/>
+        </HBox>
+    </VBox>
+</VBox>

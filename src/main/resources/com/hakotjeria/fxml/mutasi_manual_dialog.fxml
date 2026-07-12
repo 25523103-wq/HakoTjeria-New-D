@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hakotjeria.controller.MutasiManualDialogController"
+      spacing="12" prefWidth="460" styleClass="login-background">
+    <padding>
+        <Insets top="24" right="26" bottom="24" left="26"/>
+    </padding>
+
+    <Label text="Catat Mutasi Stok Manual" styleClass="section-title"/>
+
+    <VBox spacing="6">
+        <Label text="Kategori Inventaris" styleClass="form-label"/>
+        <ComboBox fx:id="kategoriCombo" styleClass="form-field" maxWidth="Infinity"/>
+    </VBox>
+    <VBox spacing="6">
+        <Label text="Nama Barang" styleClass="form-label"/>
+        <ComboBox fx:id="barangCombo" styleClass="form-field" maxWidth="Infinity"
+                  promptText="Pilih barang"/>
+    </VBox>
+    <HBox spacing="12">
+        <VBox spacing="6" HBox.hgrow="ALWAYS">
+            <Label text="Tipe Mutasi" styleClass="form-label"/>
+            <ComboBox fx:id="jenisCombo" styleClass="form-field" maxWidth="Infinity"
+                      promptText="Pilih tipe"/>
+        </VBox>
+        <VBox spacing="6" HBox.hgrow="ALWAYS">
+            <Label text="Jumlah (Qty)" styleClass="form-label"/>
+            <TextField fx:id="qtyField" styleClass="form-field" promptText="Contoh: 10"/>
+        </VBox>
+    </HBox>
+    <VBox spacing="6">
+        <Label text="Keterangan (wajib)" styleClass="form-label"/>
+        <TextArea fx:id="keteranganArea" styleClass="form-field" prefRowCount="3" wrapText="true"
+                  promptText="Contoh: Pembelian Cream Cheese / Defect-Gosong"/>
+    </VBox>
+
+    <HBox styleClass="warning-banner">
+        <Label text="Mutasi defect tidak mengembalikan Bahan Baku yang telah terpakai (R08.2). Baris mutasi bersifat Read-Only setelah tersimpan (R08.5)."
+               wrapText="true" styleClass="label-muted"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Batal" styleClass="btn-secondary" onAction="#onBatal"/>
+        <Button fx:id="simpanButton" text="Simpan Mutasi" styleClass="btn-primary"
+                defaultButton="true" onAction="#onSimpan"/>
+    </HBox>
+</VBox>

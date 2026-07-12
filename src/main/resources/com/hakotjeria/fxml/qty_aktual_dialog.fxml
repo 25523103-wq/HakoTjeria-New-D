@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hakotjeria.controller.QtyAktualDialogController"
+      spacing="12" prefWidth="560" styleClass="login-background">
+    <padding>
+        <Insets top="24" right="26" bottom="24" left="26"/>
+    </padding>
+
+    <Label text="Konfirmasi Produksi Internal" styleClass="section-title"/>
+    <Label fx:id="pertanyaanLabel" text="Berapa yang berhasil dibuat?" styleClass="page-subtitle"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Qty Aktual:" styleClass="form-label"/>
+        <TextField fx:id="qtyAktualField" styleClass="form-field" prefWidth="140"/>
+        <Label fx:id="satuanLabel" text="" styleClass="label-muted"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="targetLabel" text="" styleClass="label-muted"/>
+    </HBox>
+
+    <Label text="Pratinjau Bahan Baku yang Akan Terpotong (BOM × Qty Aktual)" styleClass="form-label"/>
+    <TableView fx:id="previewTable" styleClass="table-view" prefHeight="220">
+        <columns>
+            <TableColumn fx:id="colPrevBahan" text="BAHAN BAKU" prefWidth="170"/>
+            <TableColumn fx:id="colPrevKebutuhan" text="AKAN TERPOTONG" prefWidth="140"/>
+            <TableColumn fx:id="colPrevStok" text="STOK TERSEDIA" prefWidth="130"/>
+            <TableColumn fx:id="colPrevStatus" text="STATUS" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <HBox fx:id="kurangBanner" styleClass="warning-banner" visible="false" managed="false">
+        <Label fx:id="kurangLabel" wrapText="true" styleClass="label-muted"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <VBox.margin>
+            <Insets top="6"/>
+        </VBox.margin>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Batal" styleClass="btn-secondary" onAction="#onBatal"/>
+        <Button fx:id="konfirmasiButton" text="Konfirmasi Produksi" styleClass="btn-primary"
+                defaultButton="true" onAction="#onKonfirmasi"/>
+    </HBox>
+</VBox>

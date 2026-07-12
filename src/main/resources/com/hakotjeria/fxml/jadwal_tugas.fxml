@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hakotjeria.controller.JadwalTugasController" spacing="18">
+    <padding>
+        <Insets top="28" right="30" bottom="28" left="30"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <VBox spacing="4">
+            <Label text="Jadwal Tugas Operasional" styleClass="page-title-primary"/>
+            <Label text="Kelola produksi internal dan pengambilan barang eksternal per shift."
+                   styleClass="page-subtitle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="tambahTugasButton" text="+  Tambah Tugas" styleClass="btn-primary"
+                onAction="#onTambahTugas"/>
+    </HBox>
+
+    <HBox styleClass="toolbar" spacing="12">
+        <Label text="Tanggal:" styleClass="form-label"/>
+        <DatePicker fx:id="tanggalPicker" styleClass="form-field" prefWidth="170"/>
+        <Label text="Shift:" styleClass="form-label"/>
+        <ComboBox fx:id="shiftCombo" styleClass="form-field" prefWidth="150"/>
+        <Label fx:id="lockChipHolder" text=""/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="infoShiftAktifLabel" text="" styleClass="label-muted"/>
+    </HBox>
+
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <!-- Produksi Internal -->
+        <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS" prefWidth="560">
+            <HBox styleClass="card-header-internal" spacing="12" alignment="CENTER_LEFT">
+                <StackPane fx:id="internalIcon" styleClass="icon-badge, icon-badge-navy"/>
+                <Label text="Produksi Internal" styleClass="section-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="internalCountChip" text=""/>
+            </HBox>
+            <TableView fx:id="internalTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colIntProduk" text="PRODUK" prefWidth="170"/>
+                    <TableColumn fx:id="colIntTarget" text="TARGET" prefWidth="90"/>
+                    <TableColumn fx:id="colIntAktual" text="QTY AKTUAL" prefWidth="100"/>
+                    <TableColumn fx:id="colIntPj" text="PENANGGUNG JAWAB" prefWidth="150"/>
+                    <TableColumn fx:id="colIntStatus" text="STATUS" prefWidth="130"/>
+                    <TableColumn fx:id="colIntAksi" text="AKSI" prefWidth="150"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <!-- Pengambilan Eksternal -->
+        <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS" prefWidth="560">
+            <HBox styleClass="card-header-eksternal" spacing="12" alignment="CENTER_LEFT">
+                <StackPane fx:id="eksternalIcon" styleClass="icon-badge, icon-badge-orange"/>
+                <Label text="Pengambilan Eksternal (Kedai Tjeria)" styleClass="section-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="eksternalCountChip" text=""/>
+            </HBox>
+            <TableView fx:id="eksternalTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colEksProduk" text="PRODUK" prefWidth="170"/>
+                    <TableColumn fx:id="colEksTarget" text="TARGET" prefWidth="90"/>
+                    <TableColumn fx:id="colEksDiterima" text="QTY DITERIMA" prefWidth="110"/>
+                    <TableColumn fx:id="colEksPj" text="PENANGGUNG JAWAB" prefWidth="150"/>
+                    <TableColumn fx:id="colEksStatus" text="STATUS" prefWidth="130"/>
+                    <TableColumn fx:id="colEksAksi" text="AKSI" prefWidth="150"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </HBox>
+</VBox>

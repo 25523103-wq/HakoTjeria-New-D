@@ -1,0 +1,22 @@
+# Maven
+target/
+*.class
+
+# H2 database files (dibuat otomatis di home directory saat runtime)
+*.mv.db
+*.trace.db
+hakotjeria_db*
+
+# IDE
+.idea/
+*.iml
+.vscode/
+nbproject/private/
+nbactions.xml
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.hakotjeria.controller.ManajemenPenggunaController" spacing="18">
+    <padding>
+        <Insets top="28" right="30" bottom="28" left="30"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="16">
+        <VBox spacing="4">
+            <Label text="Manajemen Pengguna" styleClass="page-title-primary"/>
+            <Label text="Kelola akses, peran, dan data staf Hako Tjeria." styleClass="page-subtitle"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="tambahBaruButton" text="+  Tambah Pengguna Baru" styleClass="btn-primary"
+                onAction="#onTambahBaru"/>
+    </HBox>
+
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+        <!-- Daftar Pengguna -->
+        <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS" prefWidth="680">
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label text="Daftar Pengguna" styleClass="section-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <TextField fx:id="cariField" promptText="Cari nama atau peran..."
+                           styleClass="form-field" prefWidth="240"/>
+            </HBox>
+            <TableView fx:id="userTable" styleClass="table-view" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colNama" text="NAMA LENGKAP" prefWidth="220"/>
+                    <TableColumn fx:id="colUsername" text="USERNAME" prefWidth="150"/>
+                    <TableColumn fx:id="colRole" text="PERAN (ROLE)" prefWidth="140"/>
+                    <TableColumn fx:id="colStatus" text="STATUS" prefWidth="110"/>
+                    <TableColumn fx:id="colAksi" text="AKSI" prefWidth="80"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <!-- Detail / Form Akun -->
+        <VBox styleClass="card" spacing="12" prefWidth="380" minWidth="340">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <StackPane fx:id="detailIcon" styleClass="icon-badge, icon-badge-blue"/>
+                <VBox spacing="1">
+                    <Label text="Detail Akun" styleClass="section-title"/>
+                    <Label fx:id="detailNamaLabel" text="Formulir baru" styleClass="page-subtitle"/>
+                </VBox>
+            </HBox>
+
+            <VBox spacing="6">
+                <Label text="Nama Lengkap" styleClass="form-label"/>
+                <TextField fx:id="namaField" styleClass="form-field" promptText="Nama lengkap staf"/>
+            </VBox>
+            <VBox spacing="6">
+                <Label text="Username" styleClass="form-label"/>
+                <TextField fx:id="usernameField" styleClass="form-field" promptText="username unik"/>
+            </VBox>
+            <VBox fx:id="passwordBox" spacing="6">
+                <Label text="Password" styleClass="form-label"/>
+                <PasswordField fx:id="passwordField" styleClass="form-field" promptText="Minimal 6 karakter"/>
+            </VBox>
+            <VBox spacing="6">
+                <Label text="Peran (Role)" styleClass="form-label"/>
+                <ComboBox fx:id="roleCombo" styleClass="form-field" maxWidth="Infinity"/>
+            </VBox>
+            <VBox fx:id="statusBox" spacing="6">
+                <Label text="Status Akun" styleClass="form-label"/>
+                <HBox spacing="18">
+                    <fx:define>
+                        <ToggleGroup fx:id="statusGroup"/>
+                    </fx:define>
+                    <RadioButton fx:id="aktifRadio" text="Aktif" toggleGroup="$statusGroup" selected="true"/>
+                    <RadioButton fx:id="nonaktifRadio" text="Nonaktif" toggleGroup="$statusGroup"/>
+                </HBox>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button fx:id="simpanButton" text="Simpan Perubahan" styleClass="btn-primary"
+                    maxWidth="Infinity" onAction="#onSimpan"/>
+            <HBox spacing="10">
+                <Button fx:id="bersihkanButton" text="Bersihkan" styleClass="btn-secondary"
+                        maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onBersihkan"/>
+                <Button fx:id="hapusButton" text="Hapus" styleClass="btn-danger"
+                        maxWidth="Infinity" HBox.hgrow="ALWAYS" onAction="#onHapus"/>
+            </HBox>
+            <Button fx:id="resetPasswordButton" text="Reset Password" styleClass="btn-secondary"
+                    maxWidth="Infinity" onAction="#onResetPassword"/>
+        </VBox>
+    </HBox>
+</VBox>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hakotjeria.controller.MainController">
+    <left>
+        <VBox fx:id="sidebar" styleClass="sidebar" prefWidth="248">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <padding>
+                    <Insets top="4" right="6" bottom="14" left="6"/>
+                </padding>
+                <StackPane fx:id="logoBox" styleClass="sidebar-logo-box"/>
+                <VBox spacing="1">
+                    <Label text="Hako Tjeria" styleClass="sidebar-brand"/>
+                    <Label text="Industrial Bakery Management" styleClass="sidebar-brand-sub" wrapText="true"/>
+                </VBox>
+            </HBox>
+            <Separator/>
+            <VBox fx:id="navBox" spacing="4">
+                <VBox.margin>
+                    <Insets top="12"/>
+                </VBox.margin>
+            </VBox>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Separator/>
+            <VBox fx:id="logoutBox" spacing="4">
+                <VBox.margin>
+                    <Insets top="10"/>
+                </VBox.margin>
+            </VBox>
+        </VBox>
+    </left>
+    <center>
+        <StackPane fx:id="contentArea">
+            <BorderPane.margin>
+                <Insets top="0" right="0" bottom="0" left="0"/>
+            </BorderPane.margin>
+        </StackPane>
+    </center>
+</BorderPane>

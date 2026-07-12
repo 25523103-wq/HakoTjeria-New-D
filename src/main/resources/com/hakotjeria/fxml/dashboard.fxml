@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.hakotjeria.controller.DashboardController"
+            fitToWidth="true" styleClass="scroll-pane">
+    <VBox spacing="18">
+        <padding>
+            <Insets top="28" right="30" bottom="28" left="30"/>
+        </padding>
+
+        <VBox spacing="4">
+            <Label fx:id="titleLabel" text="Dashboard Produksi" styleClass="page-title"/>
+            <Label fx:id="subtitleLabel" text="Ringkasan aktivitas dan status inventaris hari ini."
+                   styleClass="page-subtitle"/>
+        </VBox>
+
+        <!-- Kartu ringkasan -->
+        <HBox spacing="16">
+            <VBox styleClass="card" spacing="6" HBox.hgrow="ALWAYS" prefWidth="260">
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <StackPane fx:id="card1Icon" styleClass="icon-badge, icon-badge-blue"/>
+                    <VBox spacing="2">
+                        <Label fx:id="card1Title" text="-" styleClass="metric-label" wrapText="true"/>
+                        <Label fx:id="card1Value" text="-" styleClass="metric-value"/>
+                        <Label fx:id="card1Note" text="" styleClass="metric-note-positive"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+            <VBox styleClass="card" spacing="6" HBox.hgrow="ALWAYS" prefWidth="260">
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <StackPane fx:id="card2Icon" styleClass="icon-badge, icon-badge-green"/>
+                    <VBox spacing="2">
+                        <Label fx:id="card2Title" text="-" styleClass="metric-label" wrapText="true"/>
+                        <Label fx:id="card2Value" text="-" styleClass="metric-value"/>
+                        <Label fx:id="card2Note" text="" styleClass="metric-note-positive"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+            <VBox styleClass="card" spacing="6" HBox.hgrow="ALWAYS" prefWidth="260">
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <StackPane fx:id="card3Icon" styleClass="icon-badge, icon-badge-orange"/>
+                    <VBox spacing="2">
+                        <Label fx:id="card3Title" text="-" styleClass="metric-label" wrapText="true"/>
+                        <Label fx:id="card3Value" text="-" styleClass="metric-value"/>
+                        <Label fx:id="card3Note" text="" styleClass="metric-note-negative"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+            <VBox styleClass="card" spacing="6" HBox.hgrow="ALWAYS" prefWidth="260">
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <StackPane fx:id="card4Icon" styleClass="icon-badge, icon-badge-navy"/>
+                    <VBox spacing="2">
+                        <Label fx:id="card4Title" text="-" styleClass="metric-label" wrapText="true"/>
+                        <Label fx:id="card4Value" text="-" styleClass="metric-value"/>
+                        <Label fx:id="card4Note" text="" styleClass="metric-label"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </HBox>
+
+        <!-- Akses cepat Staff (ER13) -->
+        <HBox fx:id="quickAccessBox" spacing="12" visible="false" managed="false"/>
+
+        <HBox spacing="16">
+            <!-- Kiri: jadwal hari ini + grafik -->
+            <VBox spacing="16" HBox.hgrow="ALWAYS" prefWidth="720">
+                <VBox styleClass="card" spacing="12">
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="Jadwal Tugas Operasional Hari Ini" styleClass="section-title"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="lihatSemuaLink" text="Lihat Semua →" styleClass="btn-link"/>
+                    </HBox>
+                    <TableView fx:id="tugasTable" styleClass="table-view" prefHeight="240">
+                        <columns>
+                            <TableColumn fx:id="colTugasProduk" text="PRODUK" prefWidth="180"/>
+                            <TableColumn fx:id="colTugasKategori" text="KATEGORI" prefWidth="150"/>
+                            <TableColumn fx:id="colTugasShift" text="SHIFT" prefWidth="80"/>
+                            <TableColumn fx:id="colTugasTarget" text="TARGET QTY" prefWidth="110"/>
+                            <TableColumn fx:id="colTugasAktual" text="QTY AKTUAL" prefWidth="110"/>
+                            <TableColumn fx:id="colTugasStatus" text="STATUS" prefWidth="130"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+
+                <VBox fx:id="chartCard" styleClass="card" spacing="8">
+                    <Label text="Perbandingan Qty Target vs Qty Aktual (Produksi Hari Ini)"
+                           styleClass="section-title"/>
+                    <BarChart fx:id="produksiChart" legendVisible="true" animated="false" prefHeight="260">
+                        <xAxis>
+                            <CategoryAxis fx:id="chartXAxis"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis fx:id="chartYAxis"/>
+                        </yAxis>
+                    </BarChart>
+                </VBox>
+            </VBox>
+
+            <!-- Kanan: kesehatan stok + aktivitas -->
+            <VBox spacing="16" prefWidth="360" minWidth="330">
+                <VBox styleClass="card" spacing="10">
+                    <Label text="Kesehatan Stok Bahan Baku" styleClass="section-title"/>
+                    <Label text="Status item kritis" styleClass="page-subtitle"/>
+                    <VBox fx:id="stokBahanBox" spacing="12"/>
+                </VBox>
+                <VBox styleClass="card" spacing="10">
+                    <Label text="Kesehatan Stok Produk Jadi" styleClass="section-title"/>
+                    <VBox fx:id="stokProdukBox" spacing="12"/>
+                </VBox>
+                <VBox fx:id="aktivitasCard" styleClass="card" spacing="10">
+                    <Label text="Aktivitas Mutasi Terbaru" styleClass="section-title"/>
+                    <VBox fx:id="aktivitasBox" spacing="10"/>
+                </VBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</ScrollPane>

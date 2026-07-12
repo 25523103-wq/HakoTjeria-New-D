@@ -20,7 +20,7 @@
                 <StackPane fx:id="logoBox" styleClass="sidebar-logo-box"/>
                 <VBox spacing="1">
                     <Label text="Hako Tjeria" styleClass="sidebar-brand"/>
-                    <Label text="Industrial Bakery Management" styleClass="sidebar-brand-sub" wrapText="true"/>
+                    <Label text="Bakery Management" styleClass="sidebar-brand-sub" wrapText="true"/>
                 </VBox>
             </HBox>
             <Separator/>

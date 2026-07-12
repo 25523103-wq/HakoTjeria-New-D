@@ -159,9 +159,6 @@ public final class PdfUtil {
         Paragraph nama = new Paragraph("HAKO TJERIA", FONT_JUDUL);
         nama.setAlignment(Element.ALIGN_CENTER);
         doc.add(nama);
-        Paragraph sub = new Paragraph("Industrial Bakery Management - Yogyakarta", FONT_SUB);
-        sub.setAlignment(Element.ALIGN_CENTER);
-        doc.add(sub);
         Paragraph garis = new Paragraph("__________________________________________________________________________",
                 new Font(Font.HELVETICA, 10, Font.BOLD, BIRU_TUA));
         garis.setAlignment(Element.ALIGN_CENTER);

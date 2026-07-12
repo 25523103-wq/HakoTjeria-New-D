@@ -17,6 +17,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 /**
  * Dialog Pencatatan Mutasi Stok Manual (UC-08).
@@ -44,6 +45,17 @@ public class MutasiManualDialogController {
     public void init(JenisInventaris jenisDefault) {
         kategoriCombo.setItems(FXCollections.observableArrayList(JenisInventaris.values()));
         jenisCombo.setItems(FXCollections.observableArrayList(JenisMutasi.values()));
+        barangCombo.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(StokItem item) {
+                return item == null ? "" : item.getNama();
+            }
+
+            @Override
+            public StokItem fromString(String string) {
+                return null;
+            }
+        });
         kategoriCombo.valueProperty().addListener((obs, o, n) -> muatBarang(n));
         kategoriCombo.setValue(jenisDefault == null ? JenisInventaris.BAHAN_BAKU : jenisDefault);
     }

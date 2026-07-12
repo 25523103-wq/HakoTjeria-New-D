@@ -39,6 +39,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 /**
  * Controller Riwayat Mutasi Stok (UC-09) dengan dua tabulasi Dual-Inventory,
@@ -115,6 +116,17 @@ public class RiwayatMutasiController {
         shiftCombo.getItems().add(SEMUA);
         shiftCombo.getItems().addAll(shiftRepo.findAll());
         shiftCombo.setValue(SEMUA);
+        barangCombo.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(StokItem item) {
+                return item == null ? "" : item.getNama();
+            }
+
+            @Override
+            public StokItem fromString(String string) {
+                return null;
+            }
+        });
 
         tabPane.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> muatBarangCombo(aktifJenis()));
         muatBarangCombo(JenisInventaris.BAHAN_BAKU);

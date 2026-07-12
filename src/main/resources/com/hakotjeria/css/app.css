@@ -71,6 +71,12 @@
     -fx-text-fill: -hk-text;
 }
 
+.metric-value-status {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -hk-text;
+}
+
 .metric-label {
     -fx-font-size: 12px;
     -fx-text-fill: -hk-text-muted;

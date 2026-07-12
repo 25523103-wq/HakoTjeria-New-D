@@ -54,7 +54,7 @@
                     <StackPane fx:id="card3Icon" styleClass="icon-badge, icon-badge-orange"/>
                     <VBox spacing="2">
                         <Label fx:id="card3Title" text="-" styleClass="metric-label" wrapText="true"/>
-                        <Label fx:id="card3Value" text="-" styleClass="metric-value"/>
+                        <Label fx:id="card3Value" text="-" styleClass="metric-value" wrapText="true" maxWidth="180"/>
                         <Label fx:id="card3Note" text="" styleClass="metric-note-negative"/>
                     </VBox>
                 </HBox>
@@ -64,7 +64,7 @@
                     <StackPane fx:id="card4Icon" styleClass="icon-badge, icon-badge-navy"/>
                     <VBox spacing="2">
                         <Label fx:id="card4Title" text="-" styleClass="metric-label" wrapText="true"/>
-                        <Label fx:id="card4Value" text="-" styleClass="metric-value"/>
+                        <Label fx:id="card4Value" text="-" styleClass="metric-value" wrapText="true" maxWidth="180"/>
                         <Label fx:id="card4Note" text="" styleClass="metric-label"/>
                     </VBox>
                 </HBox>

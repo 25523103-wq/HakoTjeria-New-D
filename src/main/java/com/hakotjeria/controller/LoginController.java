@@ -70,15 +70,15 @@ public class LoginController {
 
                 Silakan hubungi:
                 IT Support Hako Tjeria
-                Telepon/WA : 0812-0000-0000 (placeholder — ganti sesuai kontak resmi)
-                Email      : it-support@hakotjeria.example
+                Telepon/WA : 0822-8126-5130 
+                Email      : dzonncoc@gmail.com
 
                 Setelah identitas terverifikasi, Admin akan mereset password dan
                 membuka akun yang dibekukan. Anda wajib mengganti password baru
                 pada login pertama.""");
     }
 
-    /** Pemaksaan penggantian sandi pada kesempatan pertama setelah reset (UC-13). */
+/** Pemaksaan penggantian sandi pada kesempatan pertama setelah reset (UC-13). */
     private boolean bukaDialogGantiPassword(User user) {
         FXMLLoader loader = FxUtil.loader("change_password_dialog.fxml");
         ChangePasswordDialogController controller = loader.getController();
@@ -86,6 +86,12 @@ public class LoginController {
 
         Stage dialog = new Stage();
         dialog.setTitle("Ganti Password - Hako Tjeria");
+        
+        // --- PERBAIKAN POP-UP: IKAT KE JENDELA UTAMA ---
+        Stage ownerStage = (Stage) loginButton.getScene().getWindow();
+        dialog.initOwner(ownerStage);
+        // -----------------------------------------------
+
         dialog.initModality(Modality.APPLICATION_MODAL);
         Scene scene = new Scene(loader.getRoot());
         FxUtil.applyStylesheet(scene);
@@ -97,11 +103,26 @@ public class LoginController {
     private void bukaHalamanUtama() {
         Parent root = FxUtil.load("main.fxml");
         Stage stage = (Stage) loginButton.getScene().getWindow();
+        
+        // --- PERBAIKAN FULLSCREEN: SIMPAN STATUS SAAT INI ---
+        boolean isFullscreen = stage.isFullScreen();
+        boolean isMaximized = stage.isMaximized();
+        // ----------------------------------------------------
+
         Scene scene = new Scene(root, Math.max(1280, stage.getWidth()), Math.max(800, stage.getHeight()));
         FxUtil.applyStylesheet(scene);
         stage.setScene(scene);
         stage.setTitle(MainApp.APP_TITLE + " - " + Session.getCurrentUser().getNamaLengkap()
                 + " (" + Session.getCurrentUser().getRole().getLabel() + ")");
-        stage.centerOnScreen();
+        
+        // --- KEMBALIKAN STATUS JENDELA SETELAH SCENE DIGANTI ---
+        if (isFullscreen) {
+            stage.setFullScreen(true);
+        } else if (isMaximized) {
+            stage.setMaximized(true);
+        } else {
+            stage.centerOnScreen();
+        }
+        // -------------------------------------------------------
     }
 }

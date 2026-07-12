@@ -132,14 +132,14 @@ public class DashboardController {
         card1Icon.getChildren().add(Icons.of(Icons.CALENDAR, 18, Color.web("#175CD3")));
         card1Title.setText("Tugas Operasional Hari Ini");
         card1Value.setText(selesai + " / " + tugasHariIni.size());
-        card1Note.setText("tugas berstatus final");
+        card1Note.setText("Tugas Berstatus Final");
 
         int varianBahan = dashboardService.stokSemua(JenisInventaris.BAHAN_BAKU).size();
         int varianProduk = dashboardService.stokSemua(JenisInventaris.PRODUK_JADI).size();
         card2Icon.getChildren().add(Icons.of(Icons.DATABASE, 18, Color.web("#067647")));
         card2Title.setText("Varian Bahan Baku / Produk Jadi");
         card2Value.setText(varianBahan + " / " + varianProduk);
-        card2Note.setText("terdaftar pada master data");
+        card2Note.setText("Terdaftar Pada Master Data");
 
         int rendahBahan = dashboardService.stokDiBawahBatasAman(JenisInventaris.BAHAN_BAKU).size();
         int rendahProduk = dashboardService.stokDiBawahBatasAman(JenisInventaris.PRODUK_JADI).size();
@@ -152,6 +152,7 @@ public class DashboardController {
         card4Icon.getChildren().add(Icons.of(Icons.BOX, 18, Color.web("#9DB2F0")));
         card4Title.setText("Stock Opname Hari Ini (" + shift.getNamaShift() + ")");
         card4Value.setText(dashboardService.statusOpnameHariIni(shift.getId()));
+        card4Value.getStyleClass().setAll("metric-value-status");
         card4Note.setText(shift.getJamMulai() + " - " + shift.getJamSelesai());
 
         isiChart();
@@ -208,7 +209,7 @@ public class DashboardController {
         card1Icon.getChildren().add(Icons.of(Icons.CALENDAR, 18, Color.web("#175CD3")));
         card1Title.setText("Tugas Operasional Hari Ini");
         card1Value.setText(selesai + " / " + tugasHariIni.size());
-        card1Note.setText("tugas berstatus final");
+        card1Note.setText("Tugas Berstatus Final");
 
         Shift shift = Session.getActiveShift();
         card2Icon.getChildren().add(Icons.of(Icons.HISTORY, 18, Color.web("#067647")));
@@ -219,6 +220,7 @@ public class DashboardController {
         card3Icon.getChildren().add(Icons.of(Icons.BOX, 18, Color.web("#B54708")));
         card3Title.setText("Stock Opname Hari Ini");
         card3Value.setText(dashboardService.statusOpnameHariIni(shift.getId()));
+        card3Value.getStyleClass().setAll("metric-value-status");
         card3Note.setText(shift.getNamaShift());
 
         long produksi = tugasHariIni.stream()
@@ -226,7 +228,7 @@ public class DashboardController {
         card4Icon.getChildren().add(Icons.of(Icons.BREAD, 18, Color.web("#9DB2F0")));
         card4Title.setText("Produksi / Pengambilan");
         card4Value.setText(produksi + " / " + (tugasHariIni.size() - produksi));
-        card4Note.setText("pembagian tugas hari ini");
+        card4Note.setText("Pembagian Tugas Hari Ini");
 
         quickAccessBox.setVisible(true);
         quickAccessBox.setManaged(true);

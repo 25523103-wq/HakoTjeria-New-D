@@ -40,15 +40,10 @@ public class MainApp extends Application {
         stage.setMinWidth(1100);
         stage.setMinHeight(700);
         
-        // --- 1. SETTING AWAL (FULLSCREEN MURNI SAAT START) ---
-        stage.setFullScreen(true); 
-        
         // --- 2. MEMASTIKAN SAAT KELUAR FULLSCREEN (VIA ESC) LANGSUNG MAXIMIZED ---
         // Listener ini akan mendeteksi kapan pun aplikasi keluar dari mode fullscreen
-        stage.fullScreenProperty().addListener((observable, wasFullScreen, isNowFullScreen) -> {
+            stage.fullScreenProperty().addListener((observable, wasFullScreen, isNowFullScreen) -> {
             if (!isNowFullScreen) {
-                // Saat fullscreen mati (misal karena tombol ESC ditekan), paksakan menjadi Maximized.
-                // Ini akan memunculkan Taskbar dan tombol X, Minimize, Maximize di pojok kanan atas.
                 stage.setMaximized(true);
             }
         });
@@ -73,7 +68,10 @@ public class MainApp extends Application {
         });
 
         stage.show();
+        stage.setFullScreen(true); 
+        stage.setFullScreenExitHint("");
     }
+        
 
     public static void main(String[] args) {
         launch(args);

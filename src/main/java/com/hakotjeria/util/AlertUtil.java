@@ -5,6 +5,7 @@ import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.stage.Window; // Pastikan import Window ditambahkan
 
 /** Dialog notifikasi dan konfirmasi yang konsisten (ER14). */
 public final class AlertUtil {
@@ -39,14 +40,30 @@ public final class AlertUtil {
         Alert alert = new Alert(type);
         alert.setTitle("Hako Tjeria");
         alert.setHeaderText(judul);
+        
         Label label = new Label(pesan);
         label.setWrapText(true);
         label.setMaxWidth(420);
         alert.getDialogPane().setContent(label);
+        
         String css = FxUtil.stylesheet();
         if (css != null) {
             alert.getDialogPane().getStylesheets().add(css);
         }
+
+        // --- SOLUSI FULLSCREEN: MENGUNCI ALERT KE JENDELA UTAMA ---
+        // Mendeteksi otomatis jendela aplikasi yang saat ini sedang aktif/fokus
+        Window activeWindow = Window.getWindows().stream()
+                .filter(Window::isFocused)
+                .findFirst()
+                .orElse(null);
+
+        // Jika jendela utama ditemukan, jadikan dia sebagai "induk/owner" dari alert ini
+        if (activeWindow != null) {
+            alert.initOwner(activeWindow);
+        }
+        // -----------------------------------------------------------
+
         return alert;
     }
 }

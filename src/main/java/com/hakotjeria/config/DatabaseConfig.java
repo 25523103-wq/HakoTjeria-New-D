@@ -21,7 +21,7 @@ public final class DatabaseConfig {
 
     /** Folder penyimpanan file basis data, relatif terhadap root proyek. */
     private static final String DB_DIR = "data";
-    private static final String URL = "jdbc:h2:./" + DB_DIR + "/hakotjeria_db";
+    private static final String URL = "jdbc:h2:file:./data/hakotjeria_db";
     private static final String USERNAME = "sa";
     private static final String PASSWORD = "";
 

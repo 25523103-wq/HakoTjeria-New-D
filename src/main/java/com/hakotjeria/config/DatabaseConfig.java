@@ -1,5 +1,8 @@
 package com.hakotjeria.config;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -16,13 +19,21 @@ import com.hakotjeria.util.PasswordUtil;
  */
 public final class DatabaseConfig {
 
-    private static final String URL = "jdbc:h2:~/hakotjeria_db";
+    /** Folder penyimpanan file basis data, relatif terhadap root proyek. */
+    private static final String DB_DIR = "data";
+    private static final String URL = "jdbc:h2:./" + DB_DIR + "/hakotjeria_db";
     private static final String USERNAME = "sa";
     private static final String PASSWORD = "";
 
     private static final DatabaseConfig INSTANCE = new DatabaseConfig();
 
     private DatabaseConfig() {
+        // Pastikan folder database ada agar berjalan pada clone baru sekalipun.
+        try {
+            Files.createDirectories(Path.of(DB_DIR));
+        } catch (IOException e) {
+            throw new IllegalStateException("Gagal membuat folder database '" + DB_DIR + "': " + e.getMessage(), e);
+        }
     }
 
     public static DatabaseConfig getInstance() {

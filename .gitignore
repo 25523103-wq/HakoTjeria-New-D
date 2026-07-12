@@ -2,10 +2,11 @@
 target/
 *.class
 
-# H2 database files (dibuat otomatis di home directory saat runtime)
+# H2 database files (tersimpan di folder ./data saat runtime)
 *.mv.db
 *.trace.db
 hakotjeria_db*
+data/
 
 # IDE
 .idea/

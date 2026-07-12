@@ -93,25 +93,6 @@ penambahan produk (R06.5), data riwayat & dokumen tervalidasi bersifat *Read-Onl
 (R09.5/R11.5/SR06), penguncian shift setelah opname disetujui (R10.6), stok akhir shift
 otomatis menjadi stok awal shift berikutnya (R10.7), audit trail penginput/tanggal/shift (SR07).
 
-## Catatan Inkonsistensi Dokumen (SRS ↔ Tech Stack)
-
-Beberapa butir SRS pada Bab 4 ditulis dengan asumsi **deployment berbasis web**, sedangkan
-tech stack yang diwajibkan adalah **aplikasi desktop JavaFX + H2 embedded**. Implementasi
-mengikuti tech stack wajib sambil **mempertahankan maksud fungsional** tiap kebutuhan:
-
-| Butir SRS | Bunyi SRS | Penyesuaian pada implementasi desktop |
-|-----------|-----------|----------------------------------------|
-| ER19      | Arsitektur web (Chrome/Firefox/Safari) | Antarmuka desktop JavaFX; kompatibilitas peramban tidak berlaku. |
-| ER20      | RDBMS PostgreSQL/MySQL dgn Transaction Control | H2 embedded — RDBMS transaksional; jaminan atomicity pemotongan stok tetap dipenuhi via transaksi JDBC. |
-| ER24      | Pustaka PDF web (PDFKit/jsPDF) | Digantikan **OpenPDF** (setara, sesuai tech stack wajib). |
-| ER27/ER29 | HTTPS / client-server | N/A untuk aplikasi desktop single-node embedded. |
-| ER30      | Concurrency antar-Staff | Deployment embedded bersifat single-process; konsistensi dijaga transaksi JDBC. |
-| R13.4     | Blokir tombol *Back* peramban | N/A desktop; ekuivalennya sesi dibersihkan saat logout dan kembali ke halaman Login. |
-
-Tidak ada requirement fungsional yang dihapus; hanya mekanisme teknis yang disesuaikan
-dengan tech stack yang diwajibkan (sesuai arahan: SRS sebagai acuan kebutuhan, SDD & tech
-stack sebagai acuan implementasi teknis).
-
 ---
 © 2026 The Milestone — Kelompok 6.
 "# HakoTjeria-New-D" 

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.hakotjeria.model.MutasiStok;
+import com.hakotjeria.model.RingkasanBahanBaku;
 import com.hakotjeria.model.RingkasanMutasi;
 import com.hakotjeria.model.DetailStockOpname;
 import com.hakotjeria.model.StockOpname;
@@ -44,6 +45,19 @@ public final class PdfUtil {
     public static void exportMutasi(File target, String judulTabel, String deskripsiFilter,
                                     List<MutasiStok> rows, RingkasanMutasi ringkasan,
                                     boolean tampilkanStokAwalAkhir) {
+        exportMutasi(target, judulTabel, deskripsiFilter, rows, ringkasan, tampilkanStokAwalAkhir, null);
+    }
+
+    /**
+     * Ekspor riwayat mutasi terfilter ke PDF (R09.7). Untuk Mutasi Bahan Baku,
+     * {@code ringkasanPerBarang} dicetak sebagai tabel Total IN/OUT per barang
+     * (bukan dijumlahkan lintas satuan); untuk Mutasi Produk Jadi tetap
+     * memakai baris ringkasan agregat seperti semula, cukup kirim {@code null}.
+     */
+    public static void exportMutasi(File target, String judulTabel, String deskripsiFilter,
+                                    List<MutasiStok> rows, RingkasanMutasi ringkasan,
+                                    boolean tampilkanStokAwalAkhir,
+                                    List<RingkasanBahanBaku> ringkasanPerBarang) {
         Document doc = new Document(PageSize.A4.rotate(), 36, 36, 36, 36);
         try {
             PdfWriter.getInstance(doc, new FileOutputStream(target));
@@ -68,7 +82,22 @@ public final class PdfUtil {
             }
             doc.add(table);
 
-            if (ringkasan != null) {
+            if (ringkasanPerBarang != null) {
+                doc.add(new Paragraph(" ", FONT_SUB));
+                doc.add(new Paragraph("Ringkasan Stok Awal / IN / OUT / Stok Akhir per Bahan Baku", FONT_LABEL));
+                PdfPTable rb = new PdfPTable(new float[]{2.2f, 0.9f, 1.1f, 1.1f, 1.1f, 1.1f});
+                rb.setWidthPercentage(80);
+                header(rb, "Nama Bahan", "Satuan", "Stok Awal", "Total IN", "Total OUT", "Stok Akhir");
+                for (RingkasanBahanBaku r : ringkasanPerBarang) {
+                    sel(rb, r.getNama());
+                    sel(rb, r.getSatuan().getLabel());
+                    sel(rb, Formats.qty(r.getStokAwal()));
+                    sel(rb, Formats.qty(r.getTotalIn()));
+                    sel(rb, Formats.qty(r.getTotalOut()));
+                    sel(rb, Formats.qty(r.getStokAkhir()));
+                }
+                doc.add(rb);
+            } else if (ringkasan != null) {
                 doc.add(new Paragraph(" ", FONT_SUB));
                 Paragraph p = new Paragraph("Ringkasan Periode Terfilter", FONT_LABEL);
                 doc.add(p);

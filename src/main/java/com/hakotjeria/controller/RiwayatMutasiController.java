@@ -8,6 +8,7 @@ import com.hakotjeria.model.JenisInventaris;
 import com.hakotjeria.model.JenisMutasi;
 import com.hakotjeria.model.MutasiFilter;
 import com.hakotjeria.model.MutasiStok;
+import com.hakotjeria.model.RingkasanBahanBaku;
 import com.hakotjeria.model.RingkasanMutasi;
 import com.hakotjeria.model.Shift;
 import com.hakotjeria.model.StokItem;
@@ -81,7 +82,19 @@ public class RiwayatMutasiController {
     @FXML
     private TableColumn<MutasiStok, String> colBbUser;
     @FXML
-    private HBox ringkasanBahanBox;
+    private TableView<RingkasanBahanBaku> ringkasanBahanTable;
+    @FXML
+    private TableColumn<RingkasanBahanBaku, String> colRbNama;
+    @FXML
+    private TableColumn<RingkasanBahanBaku, String> colRbSatuan;
+    @FXML
+    private TableColumn<RingkasanBahanBaku, String> colRbStokAwal;
+    @FXML
+    private TableColumn<RingkasanBahanBaku, String> colRbIn;
+    @FXML
+    private TableColumn<RingkasanBahanBaku, String> colRbOut;
+    @FXML
+    private TableColumn<RingkasanBahanBaku, String> colRbStokAkhir;
     @FXML
     private TableView<MutasiStok> produkTable;
     @FXML
@@ -110,6 +123,7 @@ public class RiwayatMutasiController {
     private void initialize() {
         setupTable(colBbTanggal, colBbShift, colBbNama, colBbJenis, colBbQty, colBbKet, colBbUser, bahanTable);
         setupTable(colPjTanggal, colPjShift, colPjNama, colPjJenis, colPjQty, colPjKet, colPjUser, produkTable);
+        setupRingkasanBahanTable();
 
         jenisCombo.getItems().addAll(SEMUA, JenisMutasi.IN, JenisMutasi.OUT);
         jenisCombo.setValue(SEMUA);
@@ -175,6 +189,17 @@ public class RiwayatMutasiController {
         table.setPlaceholder(new Label("Belum ada mutasi pada filter ini."));
     }
 
+    private void setupRingkasanBahanTable() {
+        colRbNama.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNama()));
+        colRbSatuan.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getSatuan().getLabel()));
+        colRbStokAwal.setCellValueFactory(c -> new SimpleStringProperty(Formats.qty(c.getValue().getStokAwal())));
+        colRbIn.setCellValueFactory(c -> new SimpleStringProperty(Formats.qty(c.getValue().getTotalIn())));
+        colRbOut.setCellValueFactory(c -> new SimpleStringProperty(Formats.qty(c.getValue().getTotalOut())));
+        colRbStokAkhir.setCellValueFactory(c -> new SimpleStringProperty(Formats.qty(c.getValue().getStokAkhir())));
+        ringkasanBahanTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        ringkasanBahanTable.setPlaceholder(new Label("Belum ada mutasi bahan baku pada filter ini."));
+    }
+
     private MutasiFilter buildFilter(JenisInventaris jenis) {
         MutasiFilter f = new MutasiFilter();
         f.setJenisInventaris(jenis);
@@ -194,8 +219,15 @@ public class RiwayatMutasiController {
     }
 
     private void muatData() {
-        muatTab(JenisInventaris.BAHAN_BAKU, bahanTable, ringkasanBahanBox);
+        muatBahanTab();
         muatTab(JenisInventaris.PRODUK_JADI, produkTable, ringkasanProdukBox);
+    }
+
+    private void muatBahanTab() {
+        MutasiFilter f = buildFilter(JenisInventaris.BAHAN_BAKU);
+        List<MutasiStok> rows = mutasiService.riwayat(f);
+        bahanTable.setItems(FXCollections.observableArrayList(rows));
+        ringkasanBahanTable.setItems(FXCollections.observableArrayList(mutasiService.ringkasanPerBahanBaku(f)));
     }
 
     private void muatTab(JenisInventaris jenis, TableView<MutasiStok> table, HBox ringkasanBox) {
@@ -271,9 +303,15 @@ public class RiwayatMutasiController {
             return;
         }
         try {
-            RingkasanMutasi ringkasan = mutasiService.ringkasan(f);
-            PdfUtil.exportMutasi(target, jenis.getLabel(), deskripsiFilter(f), rows, ringkasan,
-                    f.getBarangId() != null);
+            if (jenis == JenisInventaris.BAHAN_BAKU) {
+                List<RingkasanBahanBaku> ringkasanPerBarang = mutasiService.ringkasanPerBahanBaku(f);
+                PdfUtil.exportMutasi(target, jenis.getLabel(), deskripsiFilter(f), rows, null, false,
+                        ringkasanPerBarang);
+            } else {
+                RingkasanMutasi ringkasan = mutasiService.ringkasan(f);
+                PdfUtil.exportMutasi(target, jenis.getLabel(), deskripsiFilter(f), rows, ringkasan,
+                        f.getBarangId() != null);
+            }
             AlertUtil.info("Export Berhasil", "Laporan PDF tersimpan di:\n" + target.getAbsolutePath());
         } catch (BusinessException e) {
             AlertUtil.error("Export Gagal", e.getMessage());

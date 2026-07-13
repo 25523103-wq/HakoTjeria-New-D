@@ -15,6 +15,7 @@ import com.hakotjeria.model.JenisInventaris;
 import com.hakotjeria.model.JenisMutasi;
 import com.hakotjeria.model.MutasiFilter;
 import com.hakotjeria.model.MutasiStok;
+import com.hakotjeria.model.RingkasanBahanBaku;
 import com.hakotjeria.model.RingkasanMutasi;
 import com.hakotjeria.model.Satuan;
 import com.hakotjeria.model.StokItem;
@@ -172,6 +173,53 @@ public class MutasiStokRepository {
         BigDecimal totalIn = queryScalar(inSql.toString(), inParams);
         BigDecimal totalOut = queryScalar(outSql.toString(), outParams);
         return new RingkasanMutasi(stokAwal, totalIn, totalOut);
+    }
+
+    /**
+     * Ringkasan Stok Awal, Total IN, Total OUT, Stok Akhir per bahan baku pada
+     * periode terfilter (R09.6). Dipecah per barang karena satuan tiap bahan
+     * baku bisa berbeda-beda, sehingga tidak valid dijumlahkan lintas barang.
+     * Stok Awal = akumulasi seluruh mutasi barang tersebut sebelum tanggal awal filter.
+     */
+    public List<RingkasanBahanBaku> ringkasanPerBahanBaku(MutasiFilter f) {
+        String stokAwalExpr = f.getDariTanggal() != null
+                ? """
+                  COALESCE((SELECT SUM(CASE WHEN m2.jenis = 'IN' THEN m2.qty ELSE -m2.qty END)
+                             FROM mutasi_stok m2
+                             WHERE m2.jenis_inventaris = 'BAHAN_BAKU' AND m2.barang_id = bb.id
+                               AND m2.tanggal < ?), 0)
+                  """
+                : "0";
+        StringBuilder sql = new StringBuilder("SELECT bb.id, bb.nama, bb.satuan, "
+                + stokAwalExpr + " AS stok_awal, "
+                + "COALESCE(SUM(CASE WHEN m.jenis = 'IN' THEN m.qty ELSE 0 END), 0) AS total_in, "
+                + "COALESCE(SUM(CASE WHEN m.jenis = 'OUT' THEN m.qty ELSE 0 END), 0) AS total_out "
+                + "FROM bahan_baku bb "
+                + "JOIN mutasi_stok m ON m.jenis_inventaris = 'BAHAN_BAKU' AND m.barang_id = bb.id "
+                + "WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+        if (f.getDariTanggal() != null) {
+            params.add(Date.valueOf(f.getDariTanggal()));
+        }
+        appendConditions(sql, params, copyTanpaJenisMutasi(f));
+        sql.append(" GROUP BY bb.id, bb.nama, bb.satuan ORDER BY bb.nama");
+
+        List<RingkasanBahanBaku> result = new ArrayList<>();
+        try (Connection con = DatabaseConfig.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+            bind(ps, params);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    result.add(new RingkasanBahanBaku(
+                            rs.getLong("id"), rs.getString("nama"), Satuan.valueOf(rs.getString("satuan")),
+                            rs.getBigDecimal("stok_awal"),
+                            rs.getBigDecimal("total_in"), rs.getBigDecimal("total_out")));
+                }
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new RepositoryException("Gagal memuat ringkasan mutasi per bahan baku", e);
+        }
     }
 
     /** Aktivitas mutasi terbaru untuk Dashboard (R02.3). */

@@ -8,6 +8,7 @@ import com.hakotjeria.model.JenisInventaris;
 import com.hakotjeria.model.JenisMutasi;
 import com.hakotjeria.model.MutasiFilter;
 import com.hakotjeria.model.MutasiStok;
+import com.hakotjeria.model.RingkasanBahanBaku;
 import com.hakotjeria.model.RingkasanMutasi;
 import com.hakotjeria.model.StokItem;
 import com.hakotjeria.repository.MutasiStokRepository;
@@ -83,6 +84,11 @@ public class MutasiStokService {
     /** Akumulasi Stok Awal, Total IN, Total OUT, Stok Akhir periode terfilter (R09.6). */
     public RingkasanMutasi ringkasan(MutasiFilter filter) {
         return mutasiRepo.ringkasan(filter);
+    }
+
+    /** Ringkasan Total IN / Total OUT per bahan baku, dipecah per satuan (R09.6). */
+    public List<RingkasanBahanBaku> ringkasanPerBahanBaku(MutasiFilter filter) {
+        return mutasiRepo.ringkasanPerBahanBaku(filter);
     }
 
     public List<StokItem> stokSemua(JenisInventaris jenis) {

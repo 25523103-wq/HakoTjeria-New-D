@@ -14,7 +14,8 @@
 
 <StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.hakotjeria.controller.LoginController"
-           styleClass="login-background">
+           styleClass="login-background"
+           stylesheets="@../css/app.css">
     <VBox alignment="CENTER">
         <VBox fx:id="loginCard" styleClass="login-card" alignment="CENTER" spacing="8"
               maxWidth="430" prefWidth="430">

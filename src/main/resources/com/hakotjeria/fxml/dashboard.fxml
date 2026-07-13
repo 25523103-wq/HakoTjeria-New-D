@@ -15,7 +15,8 @@
 
 <ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.hakotjeria.controller.DashboardController"
-            fitToWidth="true" styleClass="scroll-pane">
+            fitToWidth="true" styleClass="scroll-pane"
+            stylesheets="@../css/app.css">
     <VBox spacing="18">
         <padding>
             <Insets top="28" right="30" bottom="28" left="30"/>

@@ -10,7 +10,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.hakotjeria.controller.MainController">
+            fx:controller="com.hakotjeria.controller.MainController"
+            stylesheets="@../css/app.css">
     <left>
         <VBox fx:id="sidebar" styleClass="sidebar" prefWidth="248">
             <HBox spacing="10" alignment="CENTER_LEFT">

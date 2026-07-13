@@ -12,7 +12,8 @@
 <?import javafx.scene.layout.VBox?>
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.hakotjeria.controller.BomController" spacing="18">
+      fx:controller="com.hakotjeria.controller.BomController" spacing="18"
+      stylesheets="@../css/app.css">
     <padding>
         <Insets top="28" right="30" bottom="28" left="30"/>
     </padding>

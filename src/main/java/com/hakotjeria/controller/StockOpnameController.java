@@ -314,7 +314,7 @@ public class StockOpnameController {
         Scene scene = new Scene(loader.getRoot());
         FxUtil.applyStylesheet(scene);
         dialog.setScene(scene);
-        dialog.showAndWait();
+        FxUtil.showAndWait(dialog);
 
         String catatan = controller.getHasil();
         if (catatan == null) {

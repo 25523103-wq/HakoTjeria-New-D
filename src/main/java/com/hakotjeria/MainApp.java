@@ -3,6 +3,7 @@ package com.hakotjeria;
 import com.hakotjeria.config.DatabaseConfig;
 import com.hakotjeria.util.FxUtil;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -10,13 +11,16 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 
-/**
- * Kelas launcher utama aplikasi Hako Tjeria.
- * Menginisialisasi skema basis data lalu menampilkan halaman Login.
- */
 public class MainApp extends Application {
 
     public static final String APP_TITLE = "Hako Tjeria";
+
+    private static Stage primaryStage;
+
+    /** Jendela utama aplikasi; dipakai FxUtil untuk mengikat (initOwner) semua popup ke sini. */
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
 
     @Override
     public void init() {
@@ -26,6 +30,8 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) {
+        primaryStage = stage;
+        FxUtil.loadCustomFonts();
         Parent root = FxUtil.load("login.fxml");
         Scene scene = new Scene(root, 1280, 800);
         FxUtil.applyStylesheet(scene);
@@ -40,27 +46,41 @@ public class MainApp extends Application {
         stage.setMinWidth(1100);
         stage.setMinHeight(700);
         
-        // --- 2. MEMASTIKAN SAAT KELUAR FULLSCREEN (VIA ESC) LANGSUNG MAXIMIZED ---
-        // Listener ini akan mendeteksi kapan pun aplikasi keluar dari mode fullscreen
             stage.fullScreenProperty().addListener((observable, wasFullScreen, isNowFullScreen) -> {
             if (!isNowFullScreen) {
-                stage.setMaximized(true);
+                // Ditunda: jika dipanggil sinkron di sini, transisi native keluar-fullscreen
+                // (khususnya via ESC di Windows) belum selesai, sehingga setFullScreen(true)
+                // berikutnya (mis. dari F11) bisa diabaikan oleh window native.
+                Platform.runLater(() -> {
+                    // Fullscreen bisa "batal" secara native gara-gara popup (dialog/alert) merebut
+                    // fokus, bukan karena user menekan F11/ESC. Saat itu terjadi, biarkan saja
+                    // (jangan maximize) supaya jendela utama tidak berubah tampilan di belakang popup.
+                    if (!FxUtil.isDialogOpen()) {
+                        stage.setMaximized(true);
+                    }
+                });
             }
         });
 
         // --- 3. KEY MAPPING (F9, F10, F11) TETAP ADA ---
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+        // Dipasang di Stage (bukan Scene) agar tetap berfungsi walau Scene diganti
+        // saat login (login.fxml -> main.fxml), karena Stage selalu berada di awal
+        // event dispatch chain untuk Scene manapun yang sedang aktif.
+        stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.F11) {
-                stage.setFullScreen(!stage.isFullScreen());
+                boolean goFullScreen = !stage.isFullScreen();
+                Platform.runLater(() -> stage.setFullScreen(goFullScreen));
                 event.consume();
-            } 
+            }
             else if (event.getCode() == KeyCode.F10) {
-                if (stage.isFullScreen()) {
-                    stage.setFullScreen(false); 
+                boolean wasFullScreen = stage.isFullScreen();
+                if (wasFullScreen) {
+                    stage.setFullScreen(false);
                 }
-                stage.setMaximized(!stage.isMaximized());
+                boolean toggleMaximized = wasFullScreen || !stage.isMaximized();
+                Platform.runLater(() -> stage.setMaximized(toggleMaximized));
                 event.consume();
-            } 
+            }
             else if (event.getCode() == KeyCode.F9) {
                 stage.setIconified(true);
                 event.consume();
@@ -72,7 +92,6 @@ public class MainApp extends Application {
         stage.setFullScreenExitHint("");
     }
         
-
     public static void main(String[] args) {
         launch(args);
     }

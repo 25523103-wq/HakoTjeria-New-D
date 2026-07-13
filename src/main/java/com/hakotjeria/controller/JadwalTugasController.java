@@ -348,6 +348,6 @@ public class JadwalTugasController {
         Scene scene = new Scene(loader.getRoot());
         FxUtil.applyStylesheet(scene);
         dialog.setScene(scene);
-        dialog.showAndWait();
+        FxUtil.showAndWait(dialog);
     }
 }

@@ -24,7 +24,7 @@
                 </VBox.margin>
             </StackPane>
             <Label text="Hako Tjeria" styleClass="page-title"/>
-            <Label text="Industrial Bakery Management" styleClass="page-subtitle"/>
+            <Label text="Bakery Management" styleClass="page-subtitle"/>
 
             <VBox spacing="6" alignment="CENTER_LEFT">
                 <VBox.margin>

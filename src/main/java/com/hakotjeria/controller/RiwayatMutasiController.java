@@ -244,7 +244,7 @@ public class RiwayatMutasiController {
         Scene scene = new Scene(loader.getRoot());
         FxUtil.applyStylesheet(scene);
         dialog.setScene(scene);
-        dialog.showAndWait();
+        FxUtil.showAndWait(dialog);
         if (controller.isTersimpan()) {
             muatBarangCombo(aktifJenis());
             muatData();

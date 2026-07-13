@@ -5,7 +5,6 @@ import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.stage.Window; // Pastikan import Window ditambahkan
 
 /** Dialog notifikasi dan konfirmasi yang konsisten (ER14). */
 public final class AlertUtil {
@@ -28,12 +27,12 @@ public final class AlertUtil {
     public static boolean confirm(String judul, String pesan) {
         Alert alert = build(Alert.AlertType.CONFIRMATION, judul, pesan);
         alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
-        Optional<ButtonType> result = alert.showAndWait();
+        Optional<ButtonType> result = FxUtil.showAndWait(alert);
         return result.isPresent() && result.get() == ButtonType.YES;
     }
 
     private static void show(Alert.AlertType type, String judul, String pesan) {
-        build(type, judul, pesan).showAndWait();
+        FxUtil.showAndWait(build(type, judul, pesan));
     }
 
     private static Alert build(Alert.AlertType type, String judul, String pesan) {
@@ -50,19 +49,6 @@ public final class AlertUtil {
         if (css != null) {
             alert.getDialogPane().getStylesheets().add(css);
         }
-
-        // --- SOLUSI FULLSCREEN: MENGUNCI ALERT KE JENDELA UTAMA ---
-        // Mendeteksi otomatis jendela aplikasi yang saat ini sedang aktif/fokus
-        Window activeWindow = Window.getWindows().stream()
-                .filter(Window::isFocused)
-                .findFirst()
-                .orElse(null);
-
-        // Jika jendela utama ditemukan, jadikan dia sebagai "induk/owner" dari alert ini
-        if (activeWindow != null) {
-            alert.initOwner(activeWindow);
-        }
-        // -----------------------------------------------------------
 
         return alert;
     }

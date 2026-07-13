@@ -107,11 +107,29 @@ public class MainController {
         }
         userService.logout();
         Parent root = FxUtil.load("login.fxml");
+        root.setOpacity(0);
         Stage stage = (Stage) contentArea.getScene().getWindow();
+
+        // --- PERBAIKAN FULLSCREEN: SIMPAN STATUS SAAT INI (sama seperti LoginController) ---
+        boolean isFullscreen = stage.isFullScreen();
+        boolean isMaximized = stage.isMaximized();
+        // -------------------------------------------------------------------------------
+
         Scene scene = new Scene(root, stage.getWidth(), stage.getHeight());
         FxUtil.applyStylesheet(scene);
         stage.setScene(scene);
         stage.setTitle(MainApp.APP_TITLE);
+
+        // --- KEMBALIKAN STATUS JENDELA SETELAH SCENE DIGANTI ---
+        if (isFullscreen) {
+            stage.setFullScreen(true);
+        } else if (isMaximized) {
+            stage.setMaximized(true);
+        }
+        // -------------------------------------------------------
+
+        FxUtil.fadeIn(root);
+
         AlertUtil.info("Logout Berhasil", "Anda telah keluar dari sistem Hako Tjeria.");
     }
 }

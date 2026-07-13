@@ -96,14 +96,15 @@ public class LoginController {
         Scene scene = new Scene(loader.getRoot());
         FxUtil.applyStylesheet(scene);
         dialog.setScene(scene);
-        dialog.showAndWait();
+        FxUtil.showAndWait(dialog);
         return controller.isBerhasil();
     }
 
     private void bukaHalamanUtama() {
         Parent root = FxUtil.load("main.fxml");
+        root.setOpacity(0);
         Stage stage = (Stage) loginButton.getScene().getWindow();
-        
+
         // --- PERBAIKAN FULLSCREEN: SIMPAN STATUS SAAT INI ---
         boolean isFullscreen = stage.isFullScreen();
         boolean isMaximized = stage.isMaximized();
@@ -114,7 +115,7 @@ public class LoginController {
         stage.setScene(scene);
         stage.setTitle(MainApp.APP_TITLE + " - " + Session.getCurrentUser().getNamaLengkap()
                 + " (" + Session.getCurrentUser().getRole().getLabel() + ")");
-        
+
         // --- KEMBALIKAN STATUS JENDELA SETELAH SCENE DIGANTI ---
         if (isFullscreen) {
             stage.setFullScreen(true);
@@ -124,5 +125,7 @@ public class LoginController {
             stage.centerOnScreen();
         }
         // -------------------------------------------------------
+
+        FxUtil.fadeIn(root);
     }
 }

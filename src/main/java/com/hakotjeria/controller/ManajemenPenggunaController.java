@@ -8,6 +8,7 @@ import com.hakotjeria.service.UserService;
 import com.hakotjeria.util.AlertUtil;
 import com.hakotjeria.util.BusinessException;
 import com.hakotjeria.util.Chips;
+import com.hakotjeria.util.FxUtil;
 import com.hakotjeria.util.Icons;
 import com.hakotjeria.util.Session;
 
@@ -250,7 +251,7 @@ public class ManajemenPenggunaController {
         dialog.setTitle("Reset Password");
         dialog.setHeaderText("Reset password untuk " + editing.getNamaLengkap());
         dialog.setContentText("Password baru (min. 6 karakter):");
-        dialog.showAndWait().ifPresent(pw -> {
+        FxUtil.showAndWait(dialog).ifPresent(pw -> {
             try {
                 userService.resetPassword(editing.getId(), pw);
                 AlertUtil.info("Berhasil",

@@ -82,16 +82,25 @@ public class StockOpnameService {
     }
 
     /**
-     * Mengirim ajuan audit: seluruh kolom Stok Fisik wajib terisi angka >= 0,
-     * status menjadi "Menunggu Validasi", angka terkunci (R10.4, R10.9).
+     * Mengirim ajuan audit: status menjadi "Menunggu Validasi", angka terkunci
+     * (R10.4). Kolom Stok Fisik boleh terisi sebagian — item yang kosong
+     * dianggap tidak diaudit (tanpa selisih, tanpa mutasi penyesuaian) dan
+     * dapat didiskusikan bersama Supervisor melalui Setujui/Tolak.
      */
     public StockOpname kirimAjuan(StockOpname doc) {
         pastikanBolehDisimpan(doc);
+        boolean adaIsian = false;
         for (DetailStockOpname d : doc.getDetail()) {
-            if (d.getStokFisik() == null || d.getStokFisik().signum() < 0) {
-                throw new BusinessException("Seluruh kolom Stok Fisik wajib terisi angka nol atau lebih "
-                        + "sebelum ajuan dikirim (" + d.getNamaBarang() + ").");
+            if (d.getStokFisik() == null) {
+                continue;
             }
+            if (d.getStokFisik().signum() < 0) {
+                throw new BusinessException("Stok Fisik tidak boleh negatif (" + d.getNamaBarang() + ").");
+            }
+            adaIsian = true;
+        }
+        if (!adaIsian) {
+            throw new BusinessException("Isi minimal satu kolom Stok Fisik sebelum ajuan dikirim.");
         }
         simpanDraft(doc);
         doc.setInputBy(Session.getCurrentUser().getId());
@@ -123,7 +132,9 @@ public class StockOpnameService {
             con.setAutoCommit(false);
             try {
                 for (DetailStockOpname d : doc.getDetail()) {
-                    if (d.getSelisih().signum() == 0) {
+                    // Item tanpa isian Stok Fisik dianggap tidak diaudit
+                    // sehingga tidak menghasilkan mutasi penyesuaian.
+                    if (d.getStokFisik() == null || d.getSelisih().signum() == 0) {
                         continue;
                     }
                     MutasiStok m = new MutasiStok();
@@ -208,12 +219,16 @@ public class StockOpnameService {
         }
     }
 
+    /**
+     * Menghitung ulang selisih hanya untuk baris yang Stok Fisik-nya sudah diisi.
+     * Baris yang belum diisi dibiarkan null (bukan otomatis 0) agar "Kirim ke
+     * Supervisor" tetap dapat mendeteksi kolom yang belum diaudit (R10.9).
+     */
     private void hitungUlangSelisih(StockOpname doc) {
         for (DetailStockOpname d : doc.getDetail()) {
-            if (d.getStokFisik() == null) {
-                d.setStokFisik(BigDecimal.ZERO);
+            if (d.getStokFisik() != null) {
+                d.hitungSelisih();
             }
-            d.hitungSelisih();
         }
     }
 
@@ -241,7 +256,9 @@ public class StockOpnameService {
     private void segarkanStokSistem(StockOpname doc) {
         for (DetailStockOpname d : doc.getDetail()) {
             d.setStokSistem(mutasiRepo.hitungStok(d.getJenisInventaris(), d.getBarangId()));
-            d.hitungSelisih();
+            if (d.getStokFisik() != null) {
+                d.hitungSelisih();
+            }
         }
         for (JenisInventaris jenis : JenisInventaris.values()) {
             for (StokItem item : mutasiRepo.findStokSemua(jenis)) {

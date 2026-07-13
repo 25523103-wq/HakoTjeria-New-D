@@ -175,10 +175,16 @@ public final class DatabaseConfig {
                     jenis_inventaris VARCHAR(20)   NOT NULL,
                     barang_id        BIGINT        NOT NULL,
                     stok_sistem      DECIMAL(19,3) NOT NULL,
-                    stok_fisik       DECIMAL(19,3) NOT NULL,
+                    stok_fisik       DECIMAL(19,3),
                     selisih          DECIMAL(19,3) NOT NULL,
                     CONSTRAINT fk_detail_opname FOREIGN KEY (opname_id) REFERENCES stock_opname(id) ON DELETE CASCADE
                 )""");
+
+            // Migrasi basis data lama: stok_fisik dahulu NOT NULL sehingga baris yang
+            // belum diisi Staff otomatis tersimpan sebagai 0 (menutupi kolom yang
+            // sebenarnya belum diaudit). Kolom dilonggarkan menjadi nullable agar
+            // status "belum diisi" tetap tersimpan sebagai kosong, bukan 0.
+            st.execute("ALTER TABLE detail_stock_opname ALTER COLUMN stok_fisik SET NULL");
 
             st.execute("CREATE INDEX IF NOT EXISTS idx_mutasi_tanggal ON mutasi_stok(tanggal, shift_id)");
             st.execute("CREATE INDEX IF NOT EXISTS idx_mutasi_barang ON mutasi_stok(jenis_inventaris, barang_id)");

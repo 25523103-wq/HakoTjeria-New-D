@@ -256,6 +256,23 @@
     -fx-background-color: derive(-hk-bg, 2%);
 }
 
+/* Tombol kecil di dalam sel tabel (kolom Stok Fisik pada Stock Opname). */
+.btn-cell-edit {
+    -fx-background-color: -hk-surface;
+    -fx-background-radius: 8;
+    -fx-border-color: -hk-border-strong;
+    -fx-border-radius: 8;
+    -fx-text-fill: -hk-primary;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 10 2 10;
+    -fx-cursor: hand;
+}
+
+.btn-cell-edit:hover {
+    -fx-background-color: derive(-hk-bg, 2%);
+}
+
 .btn-danger {
     -fx-background-color: -hk-surface;
     -fx-background-radius: 10;

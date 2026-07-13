@@ -27,6 +27,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
@@ -156,6 +157,10 @@ public class StockOpnameController {
 
         bahanTable.setEditable(editable);
         produkTable.setEditable(editable);
+        // Render ulang sel agar tombol "Edit" pada kolom Stok Fisik
+        // mengikuti perubahan editabilitas dokumen.
+        bahanTable.refresh();
+        produkTable.refresh();
 
         // Staff menyusun & mengirim; Supervisor memvalidasi.
         simpanDraftButton.setVisible(editable);
@@ -174,6 +179,12 @@ public class StockOpnameController {
             pesan = supervisor
                     ? "Ajuan menunggu validasi Anda. Tinjau nilai selisih, lalu Setujui atau Tolak."
                     : "Ajuan sedang menunggu validasi Supervisor. Angka terkunci hingga divalidasi (R10.4).";
+            long tanpaIsian = dokumen.getDetail().stream()
+                    .filter(d -> d.getStokFisik() == null)
+                    .count();
+            if (tanpaIsian > 0) {
+                pesan += " Terdapat " + tanpaIsian + " item tanpa isian Stok Fisik (tidak diaudit).";
+            }
         } else if (draftBaru && dokumen.getCatatanValidasi() != null) {
             pesan = "Draf Revisi — ditolak Supervisor. Catatan: " + dokumen.getCatatanValidasi();
         } else if (draftBaru && supervisor) {
@@ -198,7 +209,43 @@ public class StockOpnameController {
 
         fisik.setCellValueFactory(c -> new SimpleStringProperty(
                 c.getValue().getStokFisik() == null ? "" : Formats.qty(c.getValue().getStokFisik())));
-        fisik.setCellFactory(TextFieldTableCell.forTableColumn(new DefaultStringConverter()));
+        // Sel Stok Fisik menampilkan tombol "Edit" agar input manual mudah
+        // ditemukan Staff (selain double-click). Tombol hanya tampil saat
+        // dokumen masih dapat diedit (Draf Revisi + peran Staff).
+        fisik.setCellFactory(col -> new TextFieldTableCell<DetailStockOpname, String>(new DefaultStringConverter()) {
+            private final Button editButton = new Button("Edit");
+            {
+                editButton.getStyleClass().add("btn-cell-edit");
+                editButton.setFocusTraversable(false);
+                editButton.setOnAction(e -> {
+                    getTableView().getSelectionModel().select(getIndex());
+                    getTableView().edit(getIndex(), col);
+                });
+            }
+
+            @Override
+            public void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (!isEditing()) {
+                    aturTombolEdit();
+                }
+            }
+
+            @Override
+            public void cancelEdit() {
+                super.cancelEdit();
+                aturTombolEdit();
+            }
+
+            private void aturTombolEdit() {
+                if (isEmpty() || !getTableView().isEditable()) {
+                    setGraphic(null);
+                    return;
+                }
+                setGraphic(editButton);
+                setContentDisplay(ContentDisplay.RIGHT);
+            }
+        });
         fisik.setOnEditCommit(evt -> {
             DetailStockOpname detail = evt.getRowValue();
             try {
@@ -269,8 +316,16 @@ public class StockOpnameController {
 
     @FXML
     private void onKirimAjuan() {
-        boolean yakin = AlertUtil.confirm("Kirim Ajuan Audit",
-                "Kirim ajuan Stock Opname ke Supervisor? Angka akan terkunci hingga divalidasi.");
+        long belumTerisi = dokumen.getDetail().stream()
+                .filter(d -> d.getStokFisik() == null)
+                .count();
+        String pesan = "Kirim ajuan Stock Opname ke Supervisor? Angka akan terkunci hingga divalidasi.";
+        if (belumTerisi > 0) {
+            pesan = belumTerisi + " dari " + dokumen.getDetail().size()
+                    + " kolom Stok Fisik belum terisi. Item tersebut dianggap tidak diaudit "
+                    + "dan tidak akan mendapat mutasi penyesuaian.\n\n" + pesan;
+        }
+        boolean yakin = AlertUtil.confirm("Kirim Ajuan Audit", pesan);
         if (!yakin) {
             return;
         }

@@ -7,6 +7,7 @@ import com.hakotjeria.model.Satuan;
 import com.hakotjeria.model.StokItem;
 import com.hakotjeria.model.SumberProduk;
 import com.hakotjeria.service.MasterDataService;
+import com.hakotjeria.service.MutasiStokService;
 import com.hakotjeria.util.AlertUtil;
 import com.hakotjeria.util.BusinessException;
 import com.hakotjeria.util.Formats;
@@ -23,7 +24,9 @@ import javafx.stage.Stage;
 /**
  * Dialog tambah/ubah master data (UC-03).
  * Satuan wajib dari Dropdown Satuan (R03.2); Kuantitas Awal hanya saat
- * pembuatan dan menjadi mutasi IN "Stok Awal" (R03.4).
+ * pembuatan dan menjadi mutasi IN "Stok Awal" (R03.4). Saat mode ubah,
+ * Stok Saat Ini dapat dikoreksi langsung; selisihnya dicatat sebagai
+ * mutasi koreksi agar jejak audit tetap utuh.
  */
 public class ItemFormDialogController {
 
@@ -46,9 +49,14 @@ public class ItemFormDialogController {
     @FXML
     private TextField kuantitasAwalField;
     @FXML
+    private VBox stokBox;
+    @FXML
+    private TextField stokField;
+    @FXML
     private Button simpanButton;
 
     private final MasterDataService masterService = new MasterDataService();
+    private final MutasiStokService mutasiService = new MutasiStokService();
     private JenisInventaris jenis;
     private StokItem existing;
     private boolean tersimpan;
@@ -71,15 +79,18 @@ public class ItemFormDialogController {
         namaField.setText(existing.getNama());
         satuanCombo.setValue(existing.getSatuan());
         sumberCombo.setValue(existing.getSumber());
-        batasMinField.setText(Formats.qty(existing.getBatasMin()));
-        // Kuantitas hanya dapat berubah melalui mutasi setelah data tersimpan (R03.4).
+        batasMinField.setText(Formats.qtyEditable(existing.getBatasMin()));
+        // Kuantitas Awal hanya untuk pembuatan; saat ubah, koreksi lewat field Stok Saat Ini.
         kuantitasAwalBox.setVisible(false);
         kuantitasAwalBox.setManaged(false);
+        stokBox.setVisible(true);
+        stokBox.setManaged(true);
+        stokField.setText(Formats.qtyEditable(existing.getStok()));
 
         if (masterService.punyaRiwayatMutasi(jenis, existing.getBarangId())) {
             satuanCombo.setDisable(true);
-            infoLabel.setText("Barang ini telah memiliki riwayat mutasi: satuan terkunci dan kuantitas "
-                    + "hanya dapat diubah melalui mutasi (R03.4).");
+            infoLabel.setText("Barang ini telah memiliki riwayat mutasi: satuan terkunci. "
+                    + "Perubahan Stok Saat Ini akan tercatat otomatis sebagai mutasi koreksi.");
             infoLabel.setVisible(true);
             infoLabel.setManaged(true);
         }
@@ -108,12 +119,14 @@ public class ItemFormDialogController {
                     masterService.buatProdukJadi(nama, satuan, sumberCombo.getValue(), batasMin, kuantitasAwal);
                 }
             } else {
+                BigDecimal stokBaru = Formats.parseQty(stokField.getText(), "Stok Saat Ini");
                 if (jenis == JenisInventaris.BAHAN_BAKU) {
                     masterService.perbaruiBahanBaku(existing.getBarangId(), nama, satuan, batasMin);
                 } else {
                     masterService.perbaruiProdukJadi(existing.getBarangId(), nama, satuan,
                             sumberCombo.getValue(), batasMin);
                 }
+                mutasiService.sesuaikanStok(jenis, existing.getBarangId(), stokBaru);
             }
             tersimpan = true;
             close();

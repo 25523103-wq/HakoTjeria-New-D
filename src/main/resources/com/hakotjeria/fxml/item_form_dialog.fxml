@@ -47,6 +47,11 @@
         <TextField fx:id="kuantitasAwalField" promptText="0" styleClass="form-field"/>
     </VBox>
 
+    <VBox fx:id="stokBox" spacing="6" managed="false" visible="false">
+        <Label text="Stok Saat Ini (selisih tercatat sebagai Mutasi Koreksi)" styleClass="form-label"/>
+        <TextField fx:id="stokField" promptText="0" styleClass="form-field"/>
+    </VBox>
+
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <VBox.margin>
             <Insets top="10"/>

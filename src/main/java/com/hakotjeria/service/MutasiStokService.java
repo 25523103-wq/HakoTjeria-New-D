@@ -76,6 +76,24 @@ public class MutasiStokService {
         mutasiRepo.insert(m);
     }
 
+    /**
+     * Menyesuaikan stok barang ke nilai target. Karena baris mutasi append-only,
+     * selisih terhadap stok saat ini dicatat sebagai mutasi koreksi IN/OUT
+     * sehingga jejak audit tetap utuh.
+     */
+    public void sesuaikanStok(JenisInventaris jenisInventaris, long barangId, BigDecimal stokBaru) {
+        if (stokBaru == null || stokBaru.signum() < 0) {
+            throw new BusinessException("Stok Saat Ini tidak boleh negatif.");
+        }
+        BigDecimal selisih = stokBaru.subtract(mutasiRepo.hitungStok(jenisInventaris, barangId));
+        if (selisih.signum() == 0) {
+            return;
+        }
+        catatMutasiManual(jenisInventaris, barangId,
+                selisih.signum() > 0 ? JenisMutasi.IN : JenisMutasi.OUT,
+                selisih.abs(), "Koreksi stok manual dari Master Data");
+    }
+
     /** Riwayat mutasi terfilter, terurut dari kejadian teranyar (R09.1 - R09.4). */
     public List<MutasiStok> riwayat(MutasiFilter filter) {
         return mutasiRepo.findByFilter(filter);

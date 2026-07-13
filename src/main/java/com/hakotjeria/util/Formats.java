@@ -34,6 +34,18 @@ public final class Formats {
         return QTY.format(value.setScale(3, RoundingMode.HALF_UP).stripTrailingZeros());
     }
 
+    /**
+     * Format angka untuk field input yang akan di-parse kembali oleh {@link #parseQty}:
+     * tanpa pemisah ribuan (agar "1.000" tidak terbaca sebagai 1) dan desimal koma.
+     */
+    public static String qtyEditable(BigDecimal value) {
+        if (value == null) {
+            return "";
+        }
+        return value.setScale(3, RoundingMode.HALF_UP).stripTrailingZeros()
+                .toPlainString().replace(".", ",");
+    }
+
     public static String qtyWithSatuan(BigDecimal value, Satuan satuan) {
         if (value == null) {
             return "-";

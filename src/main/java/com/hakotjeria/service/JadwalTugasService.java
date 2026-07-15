@@ -80,8 +80,22 @@ public class JadwalTugasService {
         if (alasan == null || alasan.isBlank()) {
             throw new BusinessException("Alasan kegagalan tugas wajib diisi.");
         }
+        pastikanPenanggungJawab(tugas);
         pastikanShiftTidakTerkunci(tugas.getTanggal(), tugas.getShiftId());
         tugasRepo.updateTidakTerpenuhi(tugasId, alasan.trim());
+    }
+
+    /**
+     * Tugas yang memiliki Staff Penanggung Jawab hanya dapat dikonfirmasi
+     * oleh staff yang ditunjuk; tugas tanpa penanggung jawab bebas diambil.
+     */
+    private void pastikanPenanggungJawab(JadwalTugas tugas) {
+        if (tugas.getStaffId() != null
+                && tugas.getStaffId().longValue() != Session.getCurrentUser().getId()) {
+            throw new BusinessException("Tugas ini ditugaskan kepada "
+                    + (tugas.getNamaStaff() == null ? "staff lain" : tugas.getNamaStaff())
+                    + ". Hanya staff penanggung jawab yang dapat mengkonfirmasi status tugas.");
+        }
     }
 
     // ===================== HELPER =====================

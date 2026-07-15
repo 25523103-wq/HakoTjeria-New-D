@@ -30,7 +30,7 @@ import com.hakotjeria.service.ProduksiService;
 import com.hakotjeria.util.PasswordUtil;
 
 /**
- * Seeder data dummy: mensimulasikan pemakaian aplikasi selama 2 minggu
+ * Seeder data dummy: mensimulasikan pemakaian aplikasi selama 1 bulan (30 hari)
  * (produksi kue internal, pengambilan eksternal, penjualan, pembelian bahan,
  * waste, hingga Stock Opname tervalidasi) secara kronologis sehingga
  * stok tidak pernah negatif dan seluruh angka konsisten dengan aturan bisnis.
@@ -75,14 +75,15 @@ public final class DummyDataSeeder {
 
             seed(con);
         }
-        System.out.println("Selesai. Data dummy 2 minggu berhasil dibuat.");
+        System.out.println("Selesai. Data dummy 1 bulan (30 hari) berhasil dibuat.");
     }
 
     // ===================== ORKESTRASI =====================
 
     private static void seed(Connection con) throws SQLException {
         LocalDate hariIni = LocalDate.now();
-        LocalDate mulai = hariIni.minusDays(14);
+        final int totalHari = 30;
+        LocalDate mulai = hariIni.minusDays(totalHari);
 
         // ---------- Pengguna ----------
         long supervisor = ensureUser(con, "Budi Santoso", "supervisor", "SUPERVISOR", "supervisor123");
@@ -157,8 +158,8 @@ public final class DummyDataSeeder {
                 Map.entry(biskuit, new BigDecimal("4000")), Map.entry(vanilla, new BigDecimal("500")),
                 Map.entry(bakingPowder, new BigDecimal("800")), Map.entry(keju, new BigDecimal("3000"))));
 
-        // ---------- Simulasi harian selama 14 hari ----------
-        for (int hari = 0; hari < 14; hari++) {
+        // ---------- Simulasi harian selama 1 bulan ----------
+        for (int hari = 0; hari < totalHari; hari++) {
             LocalDate tgl = mulai.plusDays(hari);
 
             // Restok berkala tiap 4 hari (selain hari pertama).
@@ -188,11 +189,13 @@ public final class DummyDataSeeder {
 
             // --- Shift 2: satu tugas produksi (sesekali gagal/tidak terpenuhi) ---
             long p3 = internal[(hari + 4) % internal.length];
-            if (hari == 4) {
+            if (hari == 4 || hari == 19) {
                 // Contoh alur alternatif: tugas final berstatus Tidak Terpenuhi.
+                String alasan = hari == 4 ? "Oven bermasalah, produksi dibatalkan"
+                        : "Stok bahan baku tidak mencukupi, produksi ditunda";
                 insertTugas(con, tgl, shift2, KategoriTugas.PRODUKSI_INTERNAL, p3,
                         new BigDecimal(4), null, null, StatusTugas.TIDAK_TERPENUHI,
-                        staff[hari % staff.length], "Oven bermasalah, produksi dibatalkan",
+                        staff[hari % staff.length], alasan,
                         tgl.minusDays(1).atTime(16, 30));
             } else {
                 produksi(con, tgl, shift2, p3, namaProduk.get(p3), bomProduk.get(p3),
@@ -232,8 +235,8 @@ public final class DummyDataSeeder {
                 }
             }
 
-            // --- Stock Opname tervalidasi pada akhir minggu (hari ke-7 & ke-14) ---
-            if (hari == 6 || hari == 13) {
+            // --- Stock Opname tervalidasi tiap akhir minggu (hari ke-7, 14, 21, 28) ---
+            if (hari % 7 == 6) {
                 stockOpname(con, tgl, shift2, 2, staff[hari % staff.length], supervisor, true);
             }
         }

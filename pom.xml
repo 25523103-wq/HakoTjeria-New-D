@@ -60,6 +60,11 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.hakotjeria.MainApp</mainClass>
+                    <!-- Heap lega untuk UI + page cache H2 (CACHE_SIZE 64 MB). -->
+                    <options>
+                        <option>-Xms256m</option>
+                        <option>-Xmx1024m</option>
+                    </options>
                 </configuration>
             </plugin>
             <!-- Alternatif: mvn exec:java (memakai Launcher non-modular) -->

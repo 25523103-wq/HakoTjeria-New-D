@@ -21,7 +21,24 @@ public final class DatabaseConfig {
 
     /** Folder penyimpanan file basis data, relatif terhadap root proyek. */
     private static final String DB_DIR = "data";
-    private static final String URL = "jdbc:h2:file:./data/hakotjeria_db";
+    /** Path file basis data tanpa ekstensi (H2 menambah sendiri .mv.db). */
+    private static final String DB_FILE = "./data/hakotjeria_db";
+    /**
+     * AUTO_SERVER=TRUE mengaktifkan mode campuran (mixed mode): aplikasi dan
+     * H2 Console dapat membuka file basis data yang sama secara bersamaan.
+     * Tanpa opsi ini, membuka H2 Console selagi aplikasi berjalan akan gagal
+     * karena file dikunci oleh satu proses saja.
+     *
+     * DB_CLOSE_DELAY=-1 menjaga database tetap terbuka di memori hingga JVM
+     * berakhir. Repository membuka-menutup koneksi per operasi; tanpa opsi ini
+     * H2 menutup seluruh database setiap koneksi terakhir ditutup, sehingga
+     * operasi berikutnya membayar biaya buka-file penuh (terukur ~250 ms per
+     * operasi vs ~2 ms setelah opsi ini — bottleneck utama performa UI).
+     *
+     * CACHE_SIZE=65536 (KB) menaikkan page cache H2 menjadi 64 MB.
+     */
+    private static final String URL = "jdbc:h2:file:" + DB_FILE
+            + ";AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1;CACHE_SIZE=65536";
     private static final String USERNAME = "sa";
     private static final String PASSWORD = "";
 
@@ -38,6 +55,16 @@ public final class DatabaseConfig {
 
     public static DatabaseConfig getInstance() {
         return INSTANCE;
+    }
+
+    /** URL JDBC basis data; dipakai H2 Console / tooling untuk menyambung ke file yang sama. */
+    public static String jdbcUrl() {
+        return URL;
+    }
+
+    /** Nama pengguna basis data (default H2). */
+    public static String username() {
+        return USERNAME;
     }
 
     /** Membuka koneksi baru ke basis data embedded. */

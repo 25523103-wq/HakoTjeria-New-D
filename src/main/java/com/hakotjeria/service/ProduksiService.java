@@ -105,6 +105,7 @@ public class ProduksiService {
         if (qtyAktual == null || qtyAktual.signum() <= 0) {
             throw new BusinessException("Qty Aktual harus berupa angka lebih besar dari nol (R06.4).");
         }
+        pastikanPenanggungJawab(tugas);
         pastikanShiftTidakTerkunci(tugas);
 
         Bom bom = bomRepo.findByProdukId(tugas.getProdukId())
@@ -178,6 +179,7 @@ public class ProduksiService {
         if (qtyDiterima == null || qtyDiterima.signum() <= 0) {
             throw new BusinessException("Qty Diterima harus berupa angka lebih besar dari nol.");
         }
+        pastikanPenanggungJawab(tugas);
         pastikanShiftTidakTerkunci(tugas);
 
         try (Connection con = DatabaseConfig.getInstance().getConnection()) {
@@ -210,6 +212,19 @@ public class ProduksiService {
         m.setKeterangan(keterangan);
         m.setCreatedBy(Session.getCurrentUser().getId());
         return m;
+    }
+
+    /**
+     * Tugas yang memiliki Staff Penanggung Jawab hanya dapat dikonfirmasi
+     * oleh staff yang ditunjuk; tugas tanpa penanggung jawab bebas diambil.
+     */
+    private void pastikanPenanggungJawab(JadwalTugas tugas) {
+        if (tugas.getStaffId() != null
+                && tugas.getStaffId().longValue() != Session.getCurrentUser().getId()) {
+            throw new BusinessException("Tugas ini ditugaskan kepada "
+                    + (tugas.getNamaStaff() == null ? "staff lain" : tugas.getNamaStaff())
+                    + ". Hanya staff penanggung jawab yang dapat mengkonfirmasi status tugas.");
+        }
     }
 
     private void pastikanShiftTidakTerkunci(JadwalTugas tugas) {

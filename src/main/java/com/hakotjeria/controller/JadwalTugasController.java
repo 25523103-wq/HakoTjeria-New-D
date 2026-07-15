@@ -1,7 +1,9 @@
 package com.hakotjeria.controller;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.hakotjeria.model.JadwalTugas;
 import com.hakotjeria.model.KategoriTugas;
@@ -97,6 +99,18 @@ public class JadwalTugasController {
     private final StockOpnameService opnameService = new StockOpnameService();
     private final ShiftRepository shiftRepo = new ShiftRepository();
 
+    /**
+     * Cache status kunci shift per (tanggal, shift) untuk satu kali pemuatan
+     * tabel. Sel kolom Aksi dirender ulang berkali-kali (scroll/hover/refresh)
+     * dan tanpa cache setiap render memicu query database di thread UI.
+     */
+    private final Map<String, Boolean> kunciShiftCache = new HashMap<>();
+
+    private boolean shiftTerkunci(LocalDate tanggal, long shiftId) {
+        return kunciShiftCache.computeIfAbsent(tanggal + ":" + shiftId,
+                k -> opnameService.isShiftTerkunci(tanggal, shiftId));
+    }
+
     @FXML
     private void initialize() {
         internalIcon.getChildren().add(Icons.of(Icons.BREAD, 18, Color.web("#9DB2F0")));
@@ -128,6 +142,7 @@ public class JadwalTugasController {
     }
 
     private void muatData() {
+        kunciShiftCache.clear();
         LocalDate tanggal = tanggalPicker.getValue() == null ? LocalDate.now() : tanggalPicker.getValue();
         List<JadwalTugas> semua = tugasService.daftarTugas(tanggal, shiftTerpilih());
         List<JadwalTugas> internal = semua.stream()
@@ -147,9 +162,9 @@ public class JadwalTugasController {
         boolean terkunci;
         if (shiftId == null) {
             terkunci = shiftRepo.findAll().stream()
-                    .allMatch(s -> opnameService.isShiftTerkunci(tanggal, s.getId()));
+                    .allMatch(s -> shiftTerkunci(tanggal, s.getId()));
         } else {
-            terkunci = opnameService.isShiftTerkunci(tanggal, shiftId);
+            terkunci = shiftTerkunci(tanggal, shiftId);
         }
         lockChipHolder.setGraphic(terkunci ? Chips.of("Shift Terkunci (Opname Disetujui)", "chip-red") : null);
     }
@@ -216,10 +231,13 @@ public class JadwalTugasController {
                     return;
                 }
                 HBox box = new HBox(4);
-                boolean shiftTerkunci = opnameService.isShiftTerkunci(tugas.getTanggal(), tugas.getShiftId());
-                boolean bisaAksi = !tugas.getStatus().isFinal() && !shiftTerkunci;
+                boolean bisaAksi = !tugas.getStatus().isFinal()
+                        && !shiftTerkunci(tugas.getTanggal(), tugas.getShiftId());
+                // Tugas ber-penanggung jawab hanya dapat dikonfirmasi staff yang ditunjuk.
+                boolean penanggungJawab = tugas.getStaffId() == null
+                        || tugas.getStaffId().longValue() == Session.getCurrentUser().getId();
 
-                if (Session.isStaff() && bisaAksi) {
+                if (Session.isStaff() && bisaAksi && penanggungJawab) {
                     if (internal) {
                         Button selesai = smallButton("Selesai", "btn-success");
                         selesai.setOnAction(e -> onSelesai(tugas));
@@ -232,6 +250,11 @@ public class JadwalTugasController {
                     Button gagal = smallButton("Tidak Terpenuhi", "btn-danger");
                     gagal.setOnAction(e -> onTidakTerpenuhi(tugas));
                     box.getChildren().add(gagal);
+                } else if (Session.isStaff() && bisaAksi) {
+                    javafx.scene.Node kunci = Icons.boxed(Icons.LOCK, 14, Color.web("#98A2B3"));
+                    Tooltip.install(kunci, new Tooltip("Tugas ini ditugaskan kepada "
+                            + tugas.getNamaStaff() + ". Hanya penanggung jawab yang dapat mengkonfirmasi."));
+                    box.getChildren().add(kunci);
                 }
                 if (Session.isSupervisor() && bisaAksi) {
                     Button edit = iconButton(Icons.EDIT, "#475467");

@@ -5,6 +5,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -63,6 +65,24 @@
     <VBox spacing="6">
         <Label text="Catatan (opsional)" styleClass="form-label"/>
         <TextField fx:id="catatanField" styleClass="form-field" promptText="Catatan tambahan..."/>
+    </VBox>
+
+    <!-- Pratinjau stok: Supervisor dapat memastikan bahan cukup sebelum tugas sampai ke Staff. -->
+    <VBox fx:id="previewBox" spacing="6" visible="false" managed="false">
+        <Label fx:id="stokProdukLabel" text="" styleClass="label-muted"/>
+        <Label fx:id="previewJudulLabel" text="Pratinjau Kebutuhan Bahan Baku (BOM × Qty Target)"
+               styleClass="form-label"/>
+        <TableView fx:id="previewTable" styleClass="table-view" prefHeight="150">
+            <columns>
+                <TableColumn fx:id="colPrevBahan" text="BAHAN BAKU" prefWidth="150"/>
+                <TableColumn fx:id="colPrevKebutuhan" text="KEBUTUHAN" prefWidth="120"/>
+                <TableColumn fx:id="colPrevStok" text="STOK TERSEDIA" prefWidth="120"/>
+                <TableColumn fx:id="colPrevStatus" text="STATUS" prefWidth="80"/>
+            </columns>
+        </TableView>
+        <HBox fx:id="kurangBanner" styleClass="warning-banner" visible="false" managed="false">
+            <Label fx:id="kurangLabel" wrapText="true" styleClass="label-muted"/>
+        </HBox>
     </VBox>
 
     <HBox spacing="10" alignment="CENTER_RIGHT">
